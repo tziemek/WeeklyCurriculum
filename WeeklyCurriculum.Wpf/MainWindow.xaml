@@ -6,18 +6,22 @@
     xmlns:local="clr-namespace:WeeklyCurriculum.Wpf"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="MainWindow"
-    Width="525"
-    Height="350"
     mc:Ignorable="d">
     <DockPanel>
         <!--  Week selection  -->
         <Grid DockPanel.Dock="Left">
-            <ListBox ItemsSource="{Binding AvailableWeeks}" SelectedItem="{Binding SelectedWeek, Mode=TwoWay}" />
+            <ListBox
+                MinWidth="100"
+                ItemsSource="{Binding AvailableWeeks}"
+                SelectedItem="{Binding SelectedWeek, Mode=TwoWay}" />
         </Grid>
 
         <!--  Class selection  -->
         <Grid DockPanel.Dock="Left">
-            <ListBox ItemsSource="{Binding AvailableClasses}" SelectedItem="{Binding SelectedClass, Mode=TwoWay}" />
+            <ListBox
+                MinWidth="100"
+                ItemsSource="{Binding AvailableClasses}"
+                SelectedItem="{Binding SelectedClass, Mode=TwoWay}" />
         </Grid>
 
         <!--  Day selection  -->

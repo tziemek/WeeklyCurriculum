@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using NodaTime;
+using NodaTime.Calendars;
 
 namespace WeeklyCurriculum.Wpf
 {
@@ -11,7 +14,7 @@ namespace WeeklyCurriculum.Wpf
 
         public MainViewModel()
         {
-            this.AvailableWeeks = this.GetAvailableWeeks(2017);
+            this.AvailableWeeks = new ObservableCollection<Week>(this.GetAvailableWeeks(2017));
             this.SelectedWeek = this.SelectCurrentWeek(this.AvailableWeeks, DateTime.Now);
             this.AvailableClasses = this.GetAvailableClasses();
         }
@@ -26,9 +29,21 @@ namespace WeeklyCurriculum.Wpf
             return null;
         }
 
-        private ObservableCollection<Week> GetAvailableWeeks(int year)
+        private List<Week> GetAvailableWeeks(int year)
         {
-            return null;
+            var startOfSchoolYear = new LocalDate(2017, 9, 12);
+            var endOfSchoolYear = new LocalDate(2018, 7, 31);
+            var rule = WeekYearRules.Iso;
+            var result = new List<Week>();
+            var currentStart = startOfSchoolYear;
+            while (currentStart < endOfSchoolYear)
+            {
+                var currentEnd = currentStart.Next(IsoDayOfWeek.Friday);
+                var calendarWeek = rule.GetWeekOfWeekYear(currentStart);
+                result.Add(new Week() { WeekNumber = calendarWeek, WeekStart = currentStart, WeekEnd = currentEnd });
+                currentStart = currentEnd.Next(IsoDayOfWeek.Monday);
+            }
+            return result;
         }
 
         public ObservableCollection<Week> AvailableWeeks { get => this.availableWeeks; private set => this.availableWeeks = value; }
