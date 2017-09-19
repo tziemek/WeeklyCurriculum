@@ -1,12 +1,13 @@
 ﻿using System;
+using NodaTime;
 
 namespace WeeklyCurriculum.Wpf
 {
     public class Week : ViewModelBase
     {
         private int weekNumber;
-        private DateTime? weekStart;
-        private DateTime? weekEnd;
+        private LocalDate? weekStart;
+        private LocalDate? weekEnd;
 
         public int WeekNumber
         {
@@ -20,7 +21,7 @@ namespace WeeklyCurriculum.Wpf
             }
         }
 
-        public DateTime? WeekStart
+        public LocalDate? WeekStart
         {
             get => this.weekStart; set
             {
@@ -31,7 +32,7 @@ namespace WeeklyCurriculum.Wpf
             }
         }
 
-        public DateTime? WeekEnd
+        public LocalDate? WeekEnd
         {
             get => this.weekEnd; set
             {
