@@ -15,13 +15,20 @@ namespace WeeklyCurriculum.Wpf
         public MainViewModel()
         {
             this.AvailableWeeks = new ObservableCollection<Week>(this.GetAvailableWeeks(2017));
-            this.SelectedWeek = this.SelectCurrentWeek(this.AvailableWeeks, DateTime.Now);
+            this.SelectedWeek = this.SelectCurrentWeek(this.AvailableWeeks, SystemClock.Instance.GetCurrentInstant());
             this.AvailableClasses = this.GetAvailableClasses();
         }
 
-        private Week SelectCurrentWeek(ObservableCollection<Week> availableWeeks, DateTime now)
+        private Week SelectCurrentWeek(ObservableCollection<Week> availableWeeks, Instant instant)
         {
-            return null;
+            foreach (var week in availableWeeks)
+            {
+                if (week.WeekStart < instant.InUtc().LocalDateTime.Date && week.WeekEnd > instant.InUtc().LocalDateTime.Date)
+                {
+                    return week;
+                }
+            }
+            throw new InvalidOperationException("No week found for current date");
         }
 
         private ObservableCollection<SchoolClass> GetAvailableClasses()
@@ -40,7 +47,7 @@ namespace WeeklyCurriculum.Wpf
             {
                 var currentEnd = currentStart.Next(IsoDayOfWeek.Friday);
                 var calendarWeek = rule.GetWeekOfWeekYear(currentStart);
-                result.Add(new Week() { WeekNumber = calendarWeek, WeekStart = currentStart, WeekEnd = currentEnd });
+                result.Add(new Week() { WeekYear = currentStart.Year, WeekNumber = calendarWeek, WeekStart = currentStart, WeekEnd = currentEnd });
                 currentStart = currentEnd.Next(IsoDayOfWeek.Monday);
             }
             return result;

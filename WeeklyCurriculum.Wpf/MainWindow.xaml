@@ -13,7 +13,24 @@
             <ListBox
                 MinWidth="100"
                 ItemsSource="{Binding AvailableWeeks}"
-                SelectedItem="{Binding SelectedWeek, Mode=TwoWay}" />
+                SelectedItem="{Binding SelectedWeek, Mode=TwoWay}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate DataType="{x:Type local:Week}">
+                        <StackPanel>
+                            <TextBlock FontWeight="Bold" >
+                                <Run Text="{Binding WeekYear}"/>
+                                <Run Text=" - "/>
+                                <Run Text="{Binding WeekNumber}"/>
+                            </TextBlock>
+                            <TextBlock>
+                                <Run Text="{Binding WeekStartVisual, Mode=OneWay}" />
+                                <Run Text=" - " />
+                                <Run Text="{Binding WeekEndVisual, Mode=OneWay}" />
+                            </TextBlock>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
         </Grid>
 
         <!--  Class selection  -->

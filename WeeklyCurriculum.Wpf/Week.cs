@@ -6,8 +6,9 @@ namespace WeeklyCurriculum.Wpf
     public class Week : ViewModelBase
     {
         private int weekNumber;
-        private LocalDate? weekStart;
-        private LocalDate? weekEnd;
+        private int weekYear;
+        private LocalDate weekStart;
+        private LocalDate weekEnd;
 
         public int WeekNumber
         {
@@ -21,7 +22,23 @@ namespace WeeklyCurriculum.Wpf
             }
         }
 
-        public LocalDate? WeekStart
+        public int WeekYear
+        {
+            get => this.weekYear;
+            set
+            {
+                if (this.weekYear == value)
+                    return;
+                this.weekYear = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public string WeekStartVisual => this.WeekStart.ToString();
+
+        public string WeekEndVisual => this.WeekEnd.ToString();
+
+        public LocalDate WeekStart
         {
             get => this.weekStart; set
             {
@@ -32,7 +49,7 @@ namespace WeeklyCurriculum.Wpf
             }
         }
 
-        public LocalDate? WeekEnd
+        public LocalDate WeekEnd
         {
             get => this.weekEnd; set
             {
