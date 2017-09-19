@@ -13,5 +13,19 @@ namespace WeeklyCurriculum.Wpf
     /// </summary>
     public partial class App : Application
     {
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+            Application.Current.DispatcherUnhandledException += this.OnCurrentDispatcherUnhandledException;
+            var win = new MainWindow();
+            var vm = new MainViewModel();
+            win.DataContext = vm;
+            win.Show();
+
+        }
+
+        private void OnCurrentDispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        {
+        }
     }
 }
