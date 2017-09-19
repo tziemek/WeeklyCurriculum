@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using log4net;
 
 namespace WeeklyCurriculum.Wpf
 {
@@ -13,6 +14,8 @@ namespace WeeklyCurriculum.Wpf
     /// </summary>
     public partial class App : Application
     {
+        private ILog logger = LogManager.GetLogger(typeof(App));
+
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
@@ -26,6 +29,7 @@ namespace WeeklyCurriculum.Wpf
 
         private void OnCurrentDispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
+            logger.Fatal(e);
         }
     }
 }
