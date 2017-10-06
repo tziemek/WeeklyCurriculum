@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Windows.Input;
 using NodaTime;
 using NodaTime.Calendars;
 
@@ -11,6 +12,7 @@ namespace WeeklyCurriculum.Wpf
         private ObservableCollection<Week> availableWeeks;
         private ObservableCollection<SchoolClass> availableClasses;
         private Week selectedWeek;
+        private ICommand addClassCommand;
 
         public MainViewModel()
         {
@@ -68,5 +70,12 @@ namespace WeeklyCurriculum.Wpf
             }
         }
 
+        public ICommand AddClass
+        {
+            get
+            {
+                return this.addClassCommand;
+            }
+        }
     }
 }
