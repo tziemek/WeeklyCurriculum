@@ -18,6 +18,7 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <!--  Week selection  -->
+        <TextBlock Text="Week selection"/>
         <Grid Grid.Row="1">
             <ListBox
                 MinWidth="100"
@@ -43,6 +44,7 @@
         </Grid>
 
         <!--  Class selection  -->
+        <TextBlock Text="Class selection" Grid.Column="1"/>
         <DockPanel Grid.Row="1" Grid.Column="1">
             <Button DockPanel.Dock="Top" Command="{Binding AddClass}">Add</Button>
             <ListBox
@@ -52,6 +54,7 @@
         </DockPanel>
 
         <!--  Day selection  -->
+        <TextBlock Text="Day selection" Grid.Column="2"/>
         <Grid Grid.Row="1" Grid.Column="2">
             <StackPanel Orientation="Horizontal">
                 <CheckBox Content="Montag" IsChecked="{Binding SelectedClass.IsMonday, Mode=TwoWay}" />
