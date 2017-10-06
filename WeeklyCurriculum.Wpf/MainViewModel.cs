@@ -14,6 +14,7 @@ namespace WeeklyCurriculum.Wpf
         private Week selectedWeek;
         private SchoolClass selectedClass;
         private ICommand addClassCommand;
+        private ICommand dayCheckedCommand;`
 
         public MainViewModel()
         {
@@ -82,6 +83,14 @@ namespace WeeklyCurriculum.Wpf
             }
         }
 
+        public ICommand DayChecked
+        {
+            get
+            {
+                return this.dayCheckedCommand ?? (this.dayCheckedCommand = new RelayCommand(this.OnDayChecked));
+            }
+        }
+
         public SchoolClass SelectedClass
         {
             get => this.selectedClass;
@@ -95,6 +104,10 @@ namespace WeeklyCurriculum.Wpf
                 this.selectedClass = value;
                 this.RaisePropertyChanged();
             }
+        }
+
+        private void OnDayChecked(object obj)
+        {
         }
 
         private void OnAddClass(object obj)

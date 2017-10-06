@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:WeeklyCurriculum.Wpf"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     Title="MainWindow"
     mc:Ignorable="d">
     <Grid>
@@ -80,11 +81,16 @@
             <TextBlock Text="Name"/>
             <TextBox Grid.Column="2" MinWidth="100" Text="{Binding SelectedClass.Name, Mode=TwoWay}"/>
             <StackPanel Grid.Row="1" Grid.ColumnSpan="3" Orientation="Horizontal">
-                <StackPanel.Resources>
-                    <Style TargetType="CheckBox">
-                    </Style>
-                </StackPanel.Resources>
-                <CheckBox Content="Montag" IsChecked="{Binding SelectedClass.IsMonday, Mode=TwoWay}" />
+                <CheckBox Content="Montag" IsChecked="{Binding SelectedClass.IsMonday, Mode=TwoWay}">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Checked">
+                            <i:InvokeCommandAction Command="{Binding DayChecked}" />
+                        </i:EventTrigger>
+                        <i:EventTrigger EventName="Unchecked">
+                            <i:InvokeCommandAction Command="{Binding DayChecked}" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </CheckBox>
                 <CheckBox Content="Dienstag" IsChecked="{Binding SelectedClass.IsTuesday, Mode=TwoWay}" />
                 <CheckBox Content="Mittwoch" IsChecked="{Binding SelectedClass.IsWednesday, Mode=TwoWay}" />
                 <CheckBox Content="Donnerstag" IsChecked="{Binding SelectedClass.IsThursday, Mode=TwoWay}" />
