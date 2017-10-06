@@ -23,7 +23,7 @@ namespace WeeklyCurriculum.Wpf
         {
             foreach (var week in availableWeeks)
             {
-                if (week.WeekStart < instant.InUtc().LocalDateTime.Date && week.WeekEnd > instant.InUtc().LocalDateTime.Date)
+                if (instant.InUtc().LocalDateTime.Date >= week.WeekStart && instant.InUtc().LocalDateTime.Date  <= week.WeekEnd )
                 {
                     return week;
                 }
