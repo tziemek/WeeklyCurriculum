@@ -100,7 +100,9 @@ namespace WeeklyCurriculum.Wpf
         private void OnAddClass(object obj)
         {
             var schoolClass = new SchoolClass();
+            schoolClass.Name = "Enter name";
             this.AvailableClasses.Add(schoolClass);
+            this.SelectedClass = schoolClass;
         }
     }
 }

@@ -49,20 +49,59 @@
             <Button DockPanel.Dock="Top" Command="{Binding AddClass}">Add</Button>
             <ListBox
                 MinWidth="100"
+                DisplayMemberPath="Name"
                 ItemsSource="{Binding AvailableClasses}"
-                SelectedItem="{Binding SelectedClass, Mode=TwoWay}" />
+                SelectedItem="{Binding SelectedClass, Mode=TwoWay}">
+             
+            </ListBox>
         </DockPanel>
 
-        <!--  Day selection  -->
-        <TextBlock Text="Day selection" Grid.Column="2"/>
+        <TextBlock Text="Class properties" Grid.Column="2"/>
         <Grid Grid.Row="1" Grid.Column="2">
-            <StackPanel Orientation="Horizontal">
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding SelectedClass}" Value="{x:Null}">
+                            <Setter Property="IsEnabled" Value="False"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="10"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="Name"/>
+            <TextBox Grid.Column="2" MinWidth="100" Text="{Binding SelectedClass.Name, Mode=TwoWay}"/>
+            <StackPanel Grid.Row="1" Grid.ColumnSpan="3" Orientation="Horizontal">
+                <StackPanel.Resources>
+                    <Style TargetType="CheckBox">
+                    </Style>
+                </StackPanel.Resources>
                 <CheckBox Content="Montag" IsChecked="{Binding SelectedClass.IsMonday, Mode=TwoWay}" />
                 <CheckBox Content="Dienstag" IsChecked="{Binding SelectedClass.IsTuesday, Mode=TwoWay}" />
                 <CheckBox Content="Mittwoch" IsChecked="{Binding SelectedClass.IsWednesday, Mode=TwoWay}" />
                 <CheckBox Content="Donnerstag" IsChecked="{Binding SelectedClass.IsThursday, Mode=TwoWay}" />
                 <CheckBox Content="Freitag" IsChecked="{Binding SelectedClass.IsFriday, Mode=TwoWay}" />
             </StackPanel>
+            <ItemsControl Grid.Row="2" Grid.Column="3" ItemsSource="{Binding SelectedClass.SelectedDays}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Rectangle Height="100" Width="100" Fill="Red"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Columns="{Binding SelectedClass.SelectedDays.Count}"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
         </Grid>
     </Grid>
 </Window>
