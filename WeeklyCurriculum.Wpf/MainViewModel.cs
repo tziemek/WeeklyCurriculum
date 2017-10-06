@@ -12,6 +12,7 @@ namespace WeeklyCurriculum.Wpf
         private ObservableCollection<Week> availableWeeks;
         private ObservableCollection<SchoolClass> availableClasses;
         private Week selectedWeek;
+        private SchoolClass selectedClass;
         private ICommand addClassCommand;
 
         public MainViewModel()
@@ -25,7 +26,7 @@ namespace WeeklyCurriculum.Wpf
         {
             foreach (var week in availableWeeks)
             {
-                if (instant.InUtc().LocalDateTime.Date >= week.WeekStart && instant.InUtc().LocalDateTime.Date  <= week.WeekEnd )
+                if (instant.InUtc().LocalDateTime.Date >= week.WeekStart && instant.InUtc().LocalDateTime.Date <= week.WeekEnd)
                 {
                     return week;
                 }
@@ -35,7 +36,7 @@ namespace WeeklyCurriculum.Wpf
 
         private ObservableCollection<SchoolClass> GetAvailableClasses()
         {
-            return null;
+            return new ObservableCollection<SchoolClass>();
         }
 
         private List<Week> GetAvailableWeeks(int year)
@@ -64,7 +65,10 @@ namespace WeeklyCurriculum.Wpf
             get => this.selectedWeek; set
             {
                 if (this.selectedWeek == value)
+                {
                     return;
+                }
+
                 this.selectedWeek = value;
                 this.RaisePropertyChanged();
             }
@@ -74,8 +78,29 @@ namespace WeeklyCurriculum.Wpf
         {
             get
             {
-                return this.addClassCommand;
+                return this.addClassCommand ?? (this.addClassCommand = new RelayCommand(this.OnAddClass));
             }
+        }
+
+        public SchoolClass SelectedClass
+        {
+            get => this.selectedClass;
+            set
+            {
+                if (this.selectedClass == value)
+                {
+                    return;
+                }
+
+                this.selectedClass = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        private void OnAddClass(object obj)
+        {
+            var schoolClass = new SchoolClass();
+            this.AvailableClasses.Add(schoolClass);
         }
     }
 }
