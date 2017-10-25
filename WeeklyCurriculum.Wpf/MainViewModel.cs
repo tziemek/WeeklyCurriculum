@@ -14,7 +14,7 @@ namespace WeeklyCurriculum.Wpf
         private Week selectedWeek;
         private SchoolClass selectedClass;
         private ICommand addClassCommand;
-        private ICommand dayCheckedCommand;`
+        private ICommand dayCheckedCommand;
 
         public MainViewModel()
         {
