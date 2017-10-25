@@ -1,9 +1,10 @@
 ﻿using System;
+using Caliburn.Micro;
 using NodaTime;
 
 namespace WeeklyCurriculum.Wpf
 {
-    public class Week : ViewModelBase
+    public class Week : PropertyChangedBase
     {
         private int weekNumber;
         private int weekYear;
@@ -18,7 +19,7 @@ namespace WeeklyCurriculum.Wpf
                 if (this.weekNumber == value)
                     return;
                 this.weekNumber = value;
-                this.RaisePropertyChanged();
+                this.NotifyOfPropertyChange();
             }
         }
 
@@ -30,7 +31,7 @@ namespace WeeklyCurriculum.Wpf
                 if (this.weekYear == value)
                     return;
                 this.weekYear = value;
-                this.RaisePropertyChanged();
+                this.NotifyOfPropertyChange();
             }
         }
 
@@ -45,7 +46,7 @@ namespace WeeklyCurriculum.Wpf
                 if (this.weekStart == value)
                     return;
                 this.weekStart = value;
-                this.RaisePropertyChanged();
+                this.NotifyOfPropertyChange();
             }
         }
 
@@ -56,7 +57,7 @@ namespace WeeklyCurriculum.Wpf
                 if (this.weekEnd == value)
                     return;
                 this.weekEnd = value;
-                this.RaisePropertyChanged();
+                this.NotifyOfPropertyChange();
             }
         }
         }
