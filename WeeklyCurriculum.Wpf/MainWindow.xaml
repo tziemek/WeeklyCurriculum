@@ -7,7 +7,7 @@
     xmlns:local="clr-namespace:WeeklyCurriculum.Wpf"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
-    Title="MainWindow"
+    Title="Wochenplaner"
     Background="{DynamicResource MaterialDesignPaper}"
     FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
     TextElement.FontSize="14"
@@ -20,162 +20,166 @@
             <TextBox Text="{Binding Text, Mode=TwoWay}" />
         </DataTemplate>
     </Window.Resources>
-    <Grid>
 
+    <md:DialogHost>
+        <md:DialogHost.DialogContentTemplate>
+            <DataTemplate>
+                <local:DialogView DialogContent="{Binding}" />
+            </DataTemplate>
+        </md:DialogHost.DialogContentTemplate>
         <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="100" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" MinWidth="200" />
+                <ColumnDefinition Width="10" />
+                <ColumnDefinition Width="Auto" MinWidth="200" />
+                <ColumnDefinition Width="10" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <!--  Week selection  -->
-            <TextBlock Text="Week selection" />
-            <Grid Grid.Row="1">
-                <ListBox
-                    MinWidth="100"
-                    ItemsSource="{Binding AvailableWeeks}"
-                    SelectedItem="{Binding SelectedWeek, Mode=TwoWay}">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate DataType="{x:Type local:Week}">
-                            <StackPanel>
-                                <TextBlock FontWeight="Bold">
-                                    <Run Text="{Binding WeekYear}" />
-                                    <Run Text=" - KW: " />
-                                    <Run Text="{Binding WeekNumber}" />
-                                </TextBlock>
-                                <TextBlock>
-                                    <Run Text="{Binding WeekStartVisual, Mode=OneWay}" />
-                                    <Run Text=" - " />
-                                    <Run Text="{Binding WeekEndVisual, Mode=OneWay}" />
-                                </TextBlock>
-                            </StackPanel>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-            </Grid>
+            <GroupBox BorderThickness="0">
+                <GroupBox.HeaderTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <TextBlock
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                Text="Woche" />
+                            <md:PopupBox
+                                HorizontalAlignment="Right"
+                                PlacementMode="BottomAndAlignRightEdges"
+                                StaysOpen="False">
+                                <StackPanel />
+                            </md:PopupBox>
+                        </Grid>
+                    </DataTemplate>
+                </GroupBox.HeaderTemplate>
+                <Grid>
+                    <ListBox
+                        MinWidth="100"
+                        ItemsSource="{Binding AvailableWeeks}"
+                        SelectedItem="{Binding SelectedWeek, Mode=TwoWay}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate DataType="{x:Type local:Week}">
+                                <StackPanel>
+                                    <TextBlock FontWeight="Bold">
+                                        <Run Text="{Binding WeekYear}" />
+                                        <Run Text=" - KW: " />
+                                        <Run Text="{Binding WeekNumber}" />
+                                    </TextBlock>
+                                    <TextBlock>
+                                        <Run Text="{Binding WeekStartVisual, Mode=OneWay}" />
+                                        <Run Text=" - " />
+                                        <Run Text="{Binding WeekEndVisual, Mode=OneWay}" />
+                                    </TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+            </GroupBox>
 
-            <!--  Class selection  -->
-            <TextBlock Grid.Column="1" Text="Class selection" />
-            <DockPanel Grid.Row="1" Grid.Column="1">
-                <Button Command="{Binding AddClass}" DockPanel.Dock="Top">Add</Button>
+            <GroupBox Grid.Column="2" BorderThickness="0">
+                <GroupBox.HeaderTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <TextBlock
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                Text="Klasse" />
+                            <md:PopupBox
+                                HorizontalAlignment="Right"
+                                PlacementMode="BottomAndAlignRightEdges"
+                                StaysOpen="False">
+                                <StackPanel>
+                                    <Button Command="{Binding DataContext.AddClass, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" Content="Klasse hinzufügen" />
+                                </StackPanel>
+                            </md:PopupBox>
+                        </Grid>
+                    </DataTemplate>
+                </GroupBox.HeaderTemplate>
                 <ListBox
                     MinWidth="100"
                     DisplayMemberPath="Name"
                     ItemsSource="{Binding AvailableClasses}"
                     SelectedItem="{Binding SelectedClass, Mode=TwoWay}" />
-            </DockPanel>
+            </GroupBox>
 
-            <TextBlock Grid.Column="2" Text="Class properties" />
-            <Grid Grid.Row="1" Grid.Column="2">
-                <Grid.Style>
-                    <Style TargetType="Grid">
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding SelectedClass}" Value="{x:Null}">
-                                <Setter Property="IsEnabled" Value="False" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </Grid.Style>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="10" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <TextBlock Text="Name" />
-                <TextBlock
-                    Grid.Column="2"
-                    MinWidth="100"
-                    Text="{Binding SelectedClass.Name}" />
-                <StackPanel
-                    Grid.Row="1"
-                    Grid.ColumnSpan="3"
-                    Orientation="Horizontal">
-                    <CheckBox Content="Montag" IsChecked="{Binding SelectedClass.IsMonday, Mode=TwoWay}">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="Checked">
-                                <i:InvokeCommandAction Command="{Binding DayChecked}" />
-                            </i:EventTrigger>
-                            <i:EventTrigger EventName="Unchecked">
-                                <i:InvokeCommandAction Command="{Binding DayChecked}" />
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </CheckBox>
-                    <CheckBox Content="Dienstag" IsChecked="{Binding SelectedClass.IsTuesday, Mode=TwoWay}">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="Checked">
-                                <i:InvokeCommandAction Command="{Binding DayChecked}" />
-                            </i:EventTrigger>
-                            <i:EventTrigger EventName="Unchecked">
-                                <i:InvokeCommandAction Command="{Binding DayChecked}" />
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </CheckBox>
-                    <CheckBox Content="Mittwoch" IsChecked="{Binding SelectedClass.IsWednesday, Mode=TwoWay}">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="Checked">
-                                <i:InvokeCommandAction Command="{Binding DayChecked}" />
-                            </i:EventTrigger>
-                            <i:EventTrigger EventName="Unchecked">
-                                <i:InvokeCommandAction Command="{Binding DayChecked}" />
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </CheckBox>
-                    <CheckBox Content="Donnerstag" IsChecked="{Binding SelectedClass.IsThursday, Mode=TwoWay}">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="Checked">
-                                <i:InvokeCommandAction Command="{Binding DayChecked}" />
-                            </i:EventTrigger>
-                            <i:EventTrigger EventName="Unchecked">
-                                <i:InvokeCommandAction Command="{Binding DayChecked}" />
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </CheckBox>
-                    <CheckBox Content="Freitag" IsChecked="{Binding SelectedClass.IsFriday, Mode=TwoWay}">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="Checked">
-                                <i:InvokeCommandAction Command="{Binding DayChecked}" />
-                            </i:EventTrigger>
-                            <i:EventTrigger EventName="Unchecked">
-                                <i:InvokeCommandAction Command="{Binding DayChecked}" />
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </CheckBox>
-                </StackPanel>
-                <ItemsControl
-                    Grid.Row="2"
-                    Grid.Column="3"
-                    ItemsSource="{Binding SelectedClass.SelectedDays}">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Rectangle
-                                Width="100"
-                                Height="100"
-                                Fill="Red" />
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <UniformGrid Columns="{Binding SelectedClass.SelectedDays.Count}" />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                </ItemsControl>
-            </Grid>
+            <GroupBox Grid.Column="4" BorderThickness="0">
+                <GroupBox.HeaderTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <TextBlock
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                Text="Eigenschaften" />
+                            <md:PopupBox
+                                HorizontalAlignment="Right"
+                                PlacementMode="BottomAndAlignRightEdges"
+                                StaysOpen="False">
+                                <StackPanel />
+                            </md:PopupBox>
+                        </Grid>
+                    </DataTemplate>
+                </GroupBox.HeaderTemplate>
+                <Grid>
+                    <Grid.Style>
+                        <Style TargetType="Grid">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding SelectedClass}" Value="{x:Null}">
+                                    <Setter Property="IsEnabled" Value="False" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Grid.Style>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="10" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="Name" />
+                    <TextBlock
+                        Grid.Column="2"
+                        MinWidth="100"
+                        Text="{Binding SelectedClass.Name}" />
+                    <UniformGrid
+                        Grid.Row="1"
+                        Grid.ColumnSpan="3"
+                        Columns="5">
+                        <UniformGrid.Resources>
+                            <Style BasedOn="{StaticResource MaterialDesignFlatPrimaryToggleButton}" TargetType="ToggleButton">
+                                <Setter Property="Margin" Value="5,0" />
+                            </Style>
+                        </UniformGrid.Resources>
+                        <ToggleButton Content="Montag" IsChecked="{Binding SelectedClass.IsMonday, Mode=TwoWay}" />
+                        <ToggleButton Content="Dienstag" IsChecked="{Binding SelectedClass.IsTuesday, Mode=TwoWay}" />
+                        <ToggleButton Content="Mittwoch" IsChecked="{Binding SelectedClass.IsWednesday, Mode=TwoWay}" />
+                        <ToggleButton Content="Donnerstag" IsChecked="{Binding SelectedClass.IsThursday, Mode=TwoWay}" />
+                        <ToggleButton Content="Freitag" IsChecked="{Binding SelectedClass.IsFriday, Mode=TwoWay}" />
+                    </UniformGrid>
+                    <ItemsControl
+                        Grid.Row="2"
+                        Grid.Column="3"
+                        ItemsSource="{Binding SelectedClass.SelectedDays}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Rectangle
+                                    Width="100"
+                                    Height="100"
+                                    Fill="Red" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <UniformGrid Columns="{Binding SelectedClass.SelectedDays.Count}" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                    </ItemsControl>
+                </Grid>
+            </GroupBox>
         </Grid>
-        <md:DialogHost>
-            <md:DialogHost.DialogContentTemplate>
-                <DataTemplate>
-                    <local:DialogView DialogContent="{Binding}" />
-                </DataTemplate>
-            </md:DialogHost.DialogContentTemplate>
-        </md:DialogHost>
-    </Grid>
+    </md:DialogHost>
 </Window>

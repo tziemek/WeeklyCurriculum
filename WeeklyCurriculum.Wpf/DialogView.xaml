@@ -10,7 +10,7 @@
     d:DesignHeight="300"
     d:DesignWidth="300"
     mc:Ignorable="d">
-    <md:ColorZone Mode="PrimaryMid">
+    <md:ColorZone Mode="PrimaryLight">
         <DockPanel Margin="10">
             <UniformGrid Columns="2" DockPanel.Dock="Bottom">
                 <Button
