@@ -13,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace WeeklyCurriculum.Wpf.Views
+namespace WeeklyCurriculum.Wpf
 {
     /// <summary>
-    /// Interaction logic for AddClassView.xaml
+    /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class AddClassView : Window
+    public partial class MainWindow : Window
     {
-        public AddClassView()
+        public MainWindow()
         {
             InitializeComponent();
         }

@@ -20,10 +20,10 @@ namespace WeeklyCurriculum.Wpf
         {
             base.OnStartup(e);
             Application.Current.DispatcherUnhandledException += this.OnCurrentDispatcherUnhandledException;
-            //var win = new MainWindow();
-            //var vm = new MainViewModel();
-            //win.DataContext = vm;
-            //win.Show();
+            var win = new MainWindow();
+            var vm = new MainViewModel();
+            win.DataContext = vm;
+            win.Show();
         }
 
         private void OnCurrentDispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)

@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel.Composition;
 using System.Windows.Input;
-using Caliburn.Micro;
 using NodaTime;
 using NodaTime.Calendars;
 
-namespace WeeklyCurriculum.Wpf.ViewModels
+namespace WeeklyCurriculum.Wpf
 {
-    [Export(typeof(MainWindowViewModel))]
-    public class MainWindowViewModel : PropertyChangedBase
+    public class MainViewModel : ViewModelBase
     {
         private ObservableCollection<Week> availableWeeks;
         private ObservableCollection<SchoolClass> availableClasses;
@@ -18,15 +15,12 @@ namespace WeeklyCurriculum.Wpf.ViewModels
         private SchoolClass selectedClass;
         private ICommand addClassCommand;
         private ICommand dayCheckedCommand;
-        private readonly IWindowManager windowManager;
 
-        [ImportingConstructor]
-        public MainWindowViewModel(IWindowManager windowManager)
+        public MainViewModel()
         {
             this.AvailableWeeks = new ObservableCollection<Week>(this.GetAvailableWeeks(2017));
             this.SelectedWeek = this.SelectCurrentWeek(this.AvailableWeeks, SystemClock.Instance.GetCurrentInstant());
             this.AvailableClasses = this.GetAvailableClasses();
-            this.windowManager = windowManager;
         }
 
         private Week SelectCurrentWeek(ObservableCollection<Week> availableWeeks, Instant instant)
@@ -77,24 +71,23 @@ namespace WeeklyCurriculum.Wpf.ViewModels
                 }
 
                 this.selectedWeek = value;
-                this.NotifyOfPropertyChange();
+                this.RaisePropertyChanged();
             }
         }
 
-        public void AddClass()
+        public ICommand AddClass
         {
-            this.windowManager.ShowDialog(new AddClassViewModel());
-            var schoolClass = new SchoolClass();
-            schoolClass.Name = "Enter name";
-            this.AvailableClasses.Add(schoolClass);
-            this.SelectedClass = schoolClass;
+            get
+            {
+                return this.addClassCommand ?? (this.addClassCommand = new RelayCommand(this.OnAddClass));
+            }
         }
 
         public ICommand DayChecked
         {
             get
             {
-                return this.dayCheckedCommand;//?? (this.dayCheckedCommand = new RelayCommand(this.OnDayChecked));
+                return this.dayCheckedCommand ?? (this.dayCheckedCommand = new RelayCommand(this.OnDayChecked));
             }
         }
 
@@ -109,7 +102,7 @@ namespace WeeklyCurriculum.Wpf.ViewModels
                 }
 
                 this.selectedClass = value;
-                this.NotifyOfPropertyChange();
+                this.RaisePropertyChanged();
             }
         }
 
@@ -119,7 +112,10 @@ namespace WeeklyCurriculum.Wpf.ViewModels
 
         private void OnAddClass(object obj)
         {
-         
+            var schoolClass = new SchoolClass();
+            schoolClass.Name = "Enter name";
+            this.AvailableClasses.Add(schoolClass);
+            this.SelectedClass = schoolClass;
         }
     }
 }

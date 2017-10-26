@@ -1,8 +1,6 @@
-﻿using Caliburn.Micro;
-
-namespace WeeklyCurriculum.Wpf
+﻿namespace WeeklyCurriculum.Wpf
 {
-    public class SchoolClass : PropertyChangedBase
+    public class SchoolClass : ViewModelBase
     {
         private string name;
         private bool isMonday;
@@ -19,7 +17,7 @@ namespace WeeklyCurriculum.Wpf
                 if (this.name == value)
                     return;
                 this.name = value;
-                this.NotifyOfPropertyChange();
+                this.RaisePropertyChanged();
             }
         }
 
@@ -31,7 +29,7 @@ namespace WeeklyCurriculum.Wpf
                 if (this.isMonday == value)
                     return;
                 this.isMonday = value;
-                this.NotifyOfPropertyChange();
+                this.RaisePropertyChanged();
             }
         }
 
@@ -43,7 +41,7 @@ namespace WeeklyCurriculum.Wpf
                 if (this.isTuesday == value)
                     return;
                 this.isTuesday = value;
-                this.NotifyOfPropertyChange();
+                this.RaisePropertyChanged();
             }
         }
 
@@ -55,7 +53,7 @@ namespace WeeklyCurriculum.Wpf
                 if (this.isWednesday == value)
                     return;
                 this.isWednesday = value;
-                this.NotifyOfPropertyChange();
+                this.RaisePropertyChanged();
             }
         }
 
@@ -67,7 +65,7 @@ namespace WeeklyCurriculum.Wpf
                 if (this.isThursday == value)
                     return;
                 this.isThursday = value;
-                this.NotifyOfPropertyChange();
+                this.RaisePropertyChanged();
             }
         }
 
@@ -79,7 +77,7 @@ namespace WeeklyCurriculum.Wpf
                 if (this.isFriday == value)
                     return;
                 this.isFriday = value;
-                this.NotifyOfPropertyChange();
+                this.RaisePropertyChanged();
             }
         }
     }
