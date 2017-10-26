@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+using ControlzEx;
+using MaterialDesignThemes.Wpf;
 using NodaTime;
 using NodaTime.Calendars;
 
@@ -110,12 +112,17 @@ namespace WeeklyCurriculum.Wpf
         {
         }
 
-        private void OnAddClass(object obj)
+        private async void OnAddClass(object obj)
         {
-            var schoolClass = new SchoolClass();
-            schoolClass.Name = "Enter name";
-            this.AvailableClasses.Add(schoolClass);
-            this.SelectedClass = schoolClass;
+            var addNewClass = new SingleInputDialogViewModel();
+            var result = await DialogHost.Show(addNewClass);
+            if (result is true && !string.IsNullOrWhiteSpace(addNewClass.Text))
+            {
+                var schoolClass = new SchoolClass();
+                schoolClass.Name = addNewClass.Text;
+                this.AvailableClasses.Add(schoolClass);
+                this.SelectedClass = schoolClass;
+            }
         }
     }
 }
