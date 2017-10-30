@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel.Composition;
+using System.Linq;
 using System.Windows.Input;
 using ControlzEx;
 using MaterialDesignThemes.Wpf;
@@ -9,8 +11,11 @@ using NodaTime.Calendars;
 
 namespace WeeklyCurriculum.Wpf
 {
+    [Export]
     public class MainViewModel : ViewModelBase
     {
+        private readonly WeekProvider weekProvider;
+        private readonly ISchoolClassProvider schoolClassProvider;
         private ObservableCollection<Week> availableWeeks;
         private ObservableCollection<SchoolClass> availableClasses;
         private Week selectedWeek;
@@ -18,11 +23,15 @@ namespace WeeklyCurriculum.Wpf
         private ICommand addClassCommand;
         private ICommand dayCheckedCommand;
 
-        public MainViewModel()
+        [ImportingConstructor]
+        public MainViewModel(WeekProvider weekProvider, ISchoolClassProvider schoolClassProvider)
         {
-            this.AvailableWeeks = new ObservableCollection<Week>(this.GetAvailableWeeks(2017));
+            this.weekProvider = weekProvider;
+            this.schoolClassProvider = schoolClassProvider;
+            this.AvailableWeeks = new ObservableCollection<Week>(this.weekProvider.GetAvailableWeeks(2017));
             this.SelectedWeek = this.SelectCurrentWeek(this.AvailableWeeks, SystemClock.Instance.GetCurrentInstant());
-            this.AvailableClasses = this.GetAvailableClasses();
+            this.AvailableClasses = new ObservableCollection<SchoolClass>(this.schoolClassProvider.GetAvailableClasses());
+            this.SelectedClass = this.AvailableClasses.FirstOrDefault();
         }
 
         private Week SelectCurrentWeek(ObservableCollection<Week> availableWeeks, Instant instant)
@@ -35,28 +44,6 @@ namespace WeeklyCurriculum.Wpf
                 }
             }
             throw new InvalidOperationException("No week found for current date");
-        }
-
-        private ObservableCollection<SchoolClass> GetAvailableClasses()
-        {
-            return new ObservableCollection<SchoolClass>();
-        }
-
-        private List<Week> GetAvailableWeeks(int year)
-        {
-            var startOfSchoolYear = new LocalDate(2017, 9, 12);
-            var endOfSchoolYear = new LocalDate(2018, 7, 31);
-            var rule = WeekYearRules.Iso;
-            var result = new List<Week>();
-            var currentStart = startOfSchoolYear;
-            while (currentStart < endOfSchoolYear)
-            {
-                var currentEnd = currentStart.Next(IsoDayOfWeek.Friday);
-                var calendarWeek = rule.GetWeekOfWeekYear(currentStart);
-                result.Add(new Week() { WeekYear = currentStart.Year, WeekNumber = calendarWeek, WeekStart = currentStart, WeekEnd = currentEnd });
-                currentStart = currentEnd.Next(IsoDayOfWeek.Monday);
-            }
-            return result;
         }
 
         public ObservableCollection<Week> AvailableWeeks { get => this.availableWeeks; private set => this.availableWeeks = value; }
