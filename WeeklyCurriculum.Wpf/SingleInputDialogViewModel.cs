@@ -7,6 +7,7 @@ namespace WeeklyCurriculum.Wpf
     public class SingleInputDialogViewModel : ViewModelBase
     {
         private string text;
+        private string errorMessage;
         private ICommand ok;
 
         public ICommand Ok
@@ -27,6 +28,16 @@ namespace WeeklyCurriculum.Wpf
             set
             {
                 this.text = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public string ErrorMessage
+        {
+            get => this.errorMessage;
+            set
+            {
+                this.errorMessage = value;
                 this.RaisePropertyChanged();
             }
         }

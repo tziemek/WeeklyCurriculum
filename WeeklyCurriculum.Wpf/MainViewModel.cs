@@ -102,7 +102,19 @@ namespace WeeklyCurriculum.Wpf
         private async void OnAddClass(object obj)
         {
             var addNewClass = new SingleInputDialogViewModel();
-            var result = await DialogHost.Show(addNewClass);
+            void OnCloseAddNewClass(object sender, DialogClosingEventArgs closingArgs)
+            {
+                if (this.AvailableClasses.Any(c => c.Name == addNewClass.Text))
+                {
+                    addNewClass.ErrorMessage = "Name already taken";
+                    closingArgs.Cancel();
+                }
+                else
+                {
+                    addNewClass.ErrorMessage = null;
+                }
+            }
+            var result = await DialogHost.Show(addNewClass, OnCloseAddNewClass);
             if (result is true && !string.IsNullOrWhiteSpace(addNewClass.Text))
             {
                 var schoolClass = new SchoolClass();
