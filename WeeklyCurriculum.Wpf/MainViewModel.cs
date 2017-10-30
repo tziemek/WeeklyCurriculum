@@ -104,6 +104,10 @@ namespace WeeklyCurriculum.Wpf
             var addNewClass = new SingleInputDialogViewModel();
             void OnCloseAddNewClass(object sender, DialogClosingEventArgs closingArgs)
             {
+                if (closingArgs.Parameter is false)
+                {
+                    return;
+                }
                 if (this.AvailableClasses.Any(c => c.Name == addNewClass.Text))
                 {
                     addNewClass.ErrorMessage = "Name already taken";

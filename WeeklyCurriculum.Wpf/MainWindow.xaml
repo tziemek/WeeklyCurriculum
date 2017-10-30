@@ -17,7 +17,10 @@
     <Window.Resources>
         <!--  DataTemplates for DialogView  -->
         <DataTemplate DataType="{x:Type local:SingleInputDialogViewModel}">
-            <TextBox Text="{Binding Text, Mode=TwoWay}" />
+            <StackPanel>
+                <TextBox Text="{Binding Text, Mode=TwoWay}" />
+                <TextBlock Foreground="Red" Text="{Binding ErrorMessage}" />
+            </StackPanel>
         </DataTemplate>
     </Window.Resources>
 
