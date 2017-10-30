@@ -55,6 +55,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ClassWeek.cs" />
+    <Compile Include="Data\SchoolClassData.cs" />
+    <Compile Include="Data\SchoolWeekData.cs" />
     <Compile Include="DialogView.xaml.cs">
       <DependentUpon>DialogView.xaml</DependentUpon>
     </Compile>
