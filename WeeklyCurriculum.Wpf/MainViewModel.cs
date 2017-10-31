@@ -175,6 +175,7 @@ namespace WeeklyCurriculum.Wpf
                     matchingWeek.Friday = this.EditingClass.Friday;
                 }
             }
+            this.schoolClassProvider.SaveClasses(this.AvailableClasses);
         }
 
         private async void OnAddClass(object obj)

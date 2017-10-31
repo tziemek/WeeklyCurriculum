@@ -125,6 +125,9 @@
     <PackageReference Include="MaterialDesignThemes">
       <Version>2.3.1.953</Version>
     </PackageReference>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>10.0.3</Version>
+    </PackageReference>
     <PackageReference Include="NodaTime">
       <Version>2.2.2</Version>
     </PackageReference>

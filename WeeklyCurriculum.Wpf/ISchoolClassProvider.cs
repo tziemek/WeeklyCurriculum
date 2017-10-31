@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
+using Newtonsoft.Json;
 using WeeklyCurriculum.Wpf.Data;
 
 namespace WeeklyCurriculum.Wpf
@@ -12,30 +9,43 @@ namespace WeeklyCurriculum.Wpf
     public interface ISchoolClassProvider
     {
         List<SchoolClassData> GetAvailableClasses();
+        bool SaveClasses(IEnumerable<SchoolClassData> classes);
     }
 
     [Export(typeof(ISchoolClassProvider))]
-    public class DemoSchoolClassProvider : ISchoolClassProvider
-    {
-        public List<SchoolClassData> GetAvailableClasses()
-        {
-            var result = new List<SchoolClassData>();
-            var demoClass1 = new SchoolClassData();
-            demoClass1.Name = "5a";
-            result.Add(demoClass1);
-            var demoClass2 = new SchoolClassData();
-            demoClass2.Name = "6b";
-            result.Add(demoClass2);
-            return result;
-        }
-    }
-
-    //[Export(typeof(ISchoolClassProvider))]
     public class FileSchoolClassProvider : ISchoolClassProvider
     {
         public List<SchoolClassData> GetAvailableClasses()
         {
-            throw new NotImplementedException();
+            var result = new List<SchoolClassData>();
+            if (File.Exists("db.json"))
+            {
+                var ser = new JsonSerializer();
+                using (var sr = new StreamReader(@"db.json"))
+                {
+                    using (JsonReader reader = new JsonTextReader(sr))
+                    {
+                        result = ser.Deserialize<List<SchoolClassData>>(reader);
+                    }
+                }
+            }
+            return result;
+        }
+
+        public bool SaveClasses(IEnumerable<SchoolClassData> classes)
+        {
+            var result = false;
+            var ser = new JsonSerializer();
+            ser.NullValueHandling = NullValueHandling.Ignore;
+            using (var sw = new StreamWriter(@"db.json"))
+            {
+                using (JsonWriter writer = new JsonTextWriter(sw))
+                {
+                    ser.Serialize(writer, classes);
+                    result = true;
+                }
+            }
+            return result;
         }
     }
 }
