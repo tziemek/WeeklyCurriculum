@@ -63,6 +63,7 @@ namespace WeeklyCurriculum.Wpf
 
                 this.selectedWeek = value;
                 this.RaisePropertyChanged();
+                this.UpdateEditingClass();
             }
         }
 
