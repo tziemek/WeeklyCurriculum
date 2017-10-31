@@ -8,5 +8,6 @@ namespace WeeklyCurriculum.Wpf
 {
     public class ClassWeek : ViewModelBase
     {
+
     }
 }

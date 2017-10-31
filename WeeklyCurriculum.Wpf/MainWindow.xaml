@@ -118,23 +118,24 @@
                                 HorizontalAlignment="Right"
                                 PlacementMode="BottomAndAlignRightEdges"
                                 StaysOpen="False">
-                                <StackPanel />
+                                <StackPanel>
+                                    <Button Command="{Binding DataContext.SaveClass, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" Content="Speichern" />
+                                </StackPanel>
                             </md:PopupBox>
                         </Grid>
                     </DataTemplate>
                 </GroupBox.HeaderTemplate>
-                <Grid>
+                <Grid DataContext="{Binding EditingClass}">
                     <Grid.Style>
                         <Style TargetType="Grid">
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding SelectedClass}" Value="{x:Null}">
+                                <DataTrigger Binding="{Binding}" Value="{x:Null}">
                                     <Setter Property="IsEnabled" Value="False" />
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
                     </Grid.Style>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
@@ -147,40 +148,53 @@
                     <TextBlock
                         Grid.Column="2"
                         MinWidth="100"
-                        Text="{Binding SelectedClass.Name}" />
+                        Text="{Binding Name}" />
                     <UniformGrid
                         Grid.Row="1"
                         Grid.ColumnSpan="3"
                         Columns="5">
                         <UniformGrid.Resources>
-                            <Style BasedOn="{StaticResource MaterialDesignFlatPrimaryToggleButton}" TargetType="ToggleButton">
+                            <Style TargetType="DockPanel">
                                 <Setter Property="Margin" Value="5,0" />
                             </Style>
+                            <Style BasedOn="{StaticResource MaterialDesignFlatPrimaryToggleButton}" TargetType="ToggleButton" />
                         </UniformGrid.Resources>
-                        <ToggleButton Content="Montag" IsChecked="{Binding SelectedClass.IsMonday, Mode=TwoWay}" />
-                        <ToggleButton Content="Dienstag" IsChecked="{Binding SelectedClass.IsTuesday, Mode=TwoWay}" />
-                        <ToggleButton Content="Mittwoch" IsChecked="{Binding SelectedClass.IsWednesday, Mode=TwoWay}" />
-                        <ToggleButton Content="Donnerstag" IsChecked="{Binding SelectedClass.IsThursday, Mode=TwoWay}" />
-                        <ToggleButton Content="Freitag" IsChecked="{Binding SelectedClass.IsFriday, Mode=TwoWay}" />
+                        <DockPanel>
+                            <ToggleButton
+                                Content="Montag"
+                                DockPanel.Dock="Top"
+                                IsChecked="{Binding IsMonday, Mode=TwoWay}" />
+                            <TextBox Text="{Binding Monday, Mode=TwoWay}" TextWrapping="Wrap" />
+                        </DockPanel>
+                        <DockPanel>
+                            <ToggleButton
+                                Content="Dienstag"
+                                DockPanel.Dock="Top"
+                                IsChecked="{Binding IsTuesday, Mode=TwoWay}" />
+                            <TextBox Text="{Binding Tuesday, Mode=TwoWay}" />
+                        </DockPanel>
+                        <DockPanel>
+                            <ToggleButton
+                                Content="Mittwoch"
+                                DockPanel.Dock="Top"
+                                IsChecked="{Binding IsWednesday, Mode=TwoWay}" />
+                            <TextBox Text="{Binding Wednesday, Mode=TwoWay}" />
+                        </DockPanel>
+                        <DockPanel>
+                            <ToggleButton
+                                Content="Donnerstag"
+                                DockPanel.Dock="Top"
+                                IsChecked="{Binding IsThursday, Mode=TwoWay}" />
+                            <TextBox Text="{Binding Thursday, Mode=TwoWay}" />
+                        </DockPanel>
+                        <DockPanel>
+                            <ToggleButton
+                                Content="Freitag"
+                                DockPanel.Dock="Top"
+                                IsChecked="{Binding IsFriday, Mode=TwoWay}" />
+                            <TextBox Text="{Binding Friday, Mode=TwoWay}" />
+                        </DockPanel>
                     </UniformGrid>
-                    <ItemsControl
-                        Grid.Row="2"
-                        Grid.Column="3"
-                        ItemsSource="{Binding SelectedClass.SelectedDays}">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Rectangle
-                                    Width="100"
-                                    Height="100"
-                                    Fill="Red" />
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <UniformGrid Columns="{Binding SelectedClass.SelectedDays.Count}" />
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                    </ItemsControl>
                 </Grid>
             </GroupBox>
         </Grid>
