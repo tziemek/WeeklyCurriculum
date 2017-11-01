@@ -3,8 +3,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:WeeklyCurriculum.Wpf">
     <Style x:Key="MaterialDesignFlatToggleButton" TargetType="{x:Type ToggleButton}">
-        <Setter Property="Foreground" Value="#616161" />
-        <Setter Property="Background" Value="#e0e0e0" />
         <Setter Property="Height" Value="40" />
         <Setter Property="FontSize" Value="18" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />
@@ -149,5 +147,12 @@
         TargetType="{x:Type ToggleButton}">
         <Setter Property="Background" Value="{DynamicResource PrimaryHueLightBrush}" />
         <Setter Property="Foreground" Value="{DynamicResource PrimaryHueDarkBrush}" />
+    </Style>
+    <Style
+        x:Key="MaterialDesignFlatAccentToggleButton"
+        BasedOn="{StaticResource MaterialDesignFlatToggleButton}"
+        TargetType="{x:Type ToggleButton}">
+        <Setter Property="Background" Value="{DynamicResource SecondaryAccentBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource SecondaryAccentForegroundBrush}" />
     </Style>
 </ResourceDictionary>

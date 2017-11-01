@@ -9,5 +9,6 @@ namespace WeeklyCurriculum.Wpf.Data
         public LocalDate YearStart { get; set; }
         public LocalDate YearEnd { get; set; }
         public List<SchoolClassData> Classes { get; set; }
+        public List<HolidayData> Holidays { get; set; }
     }
 }

@@ -39,5 +39,7 @@ namespace WeeklyCurriculum.Wpf
         }
 
         public ObservableCollection<SchoolClass> Classes { get; set; }
+
+        public ObservableCollection<Holiday> Holidays { get; set; }
     }
 }

@@ -42,16 +42,20 @@
             </DataTemplate>
         </md:DialogHost.DialogContentTemplate>
         <DockPanel>
-            <md:ColorZone
-                Margin="0,0,0,10"
-                DockPanel.Dock="Top"
-                Mode="Light">
-                <Button
-                    HorizontalAlignment="Right"
-                    Command="{Binding Save}"
-                    Content="Speichern" />
+            <md:ColorZone DockPanel.Dock="Top" Mode="PrimaryDark">
+                <Grid>
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Text="Wochenplaner" />
+                    <Button
+                        Margin="5"
+                        HorizontalAlignment="Right"
+                        Command="{Binding Save}"
+                        Content="Speichern" />
+                </Grid>
             </md:ColorZone>
-            <Grid>
+            <Grid Margin="10">
                 <Grid.Resources>
                     <Style BasedOn="{StaticResource MaterialDesignMultiFloatingActionPopupBox}" TargetType="{x:Type md:PopupBox}">
                         <Setter Property="Height" Value="40" />
@@ -66,6 +70,11 @@
                         <Setter Property="Width" Value="20" />
                     </Style>
                 </Grid.Resources>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50" />
+                    <RowDefinition Height="10" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" MinWidth="200" />
                     <ColumnDefinition Width="10" />
@@ -73,142 +82,193 @@
                     <ColumnDefinition Width="10" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <GroupBox BorderThickness="0">
-                    <GroupBox.HeaderTemplate>
-                        <DataTemplate>
-                            <Grid>
-                                <TextBlock
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Center"
-                                    Text="Schuljahr" />
-                                <md:PopupBox>
-                                    <md:PopupBox.ToggleContent>
-                                        <md:PackIcon Kind="Calendar" />
-                                    </md:PopupBox.ToggleContent>
-                                    <StackPanel>
-                                        <Button Command="{Binding DataContext.AddYear, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}">
-                                            <md:PackIcon Kind="Plus" />
-                                        </Button>
-                                    </StackPanel>
-                                </md:PopupBox>
-                            </Grid>
-                        </DataTemplate>
-                    </GroupBox.HeaderTemplate>
+
+                <Grid Grid.Row="0" Grid.Column="0">
+                    <TextBlock
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Text="Schuljahr" />
+                    <md:PopupBox>
+                        <md:PopupBox.ToggleContent>
+                            <md:PackIcon Kind="Calendar" />
+                        </md:PopupBox.ToggleContent>
+                        <StackPanel>
+                            <Button Command="{Binding AddYear}">
+                                <md:PackIcon Kind="Plus" />
+                            </Button>
+                            <Button Command="{Binding DeleteYear}" IsEnabled="False">
+                                <md:PackIcon Kind="Delete" />
+                            </Button>
+                        </StackPanel>
+                    </md:PopupBox>
+                </Grid>
+
+                <ListBox
+                    Grid.Row="2"
+                    Grid.Column="0"
+                    MinWidth="100"
+                    DisplayMemberPath="Year"
+                    ItemsSource="{Binding AvailableYears}"
+                    SelectedItem="{Binding SelectedYear, Mode=TwoWay}" />
+
+                <Grid Grid.Row="0" Grid.Column="2">
+                    <TextBlock
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Text="Klasse" />
+                    <md:PopupBox>
+                        <md:PopupBox.ToggleContent>
+                            <md:PackIcon Kind="AccountMultiple" />
+                        </md:PopupBox.ToggleContent>
+                        <StackPanel>
+                            <Button Command="{Binding AddClass}">
+                                <md:PackIcon Kind="Plus" />
+                            </Button>
+                            <Button Command="{Binding DeleteClass}" IsEnabled="False">
+                                <md:PackIcon Kind="Delete" />
+                            </Button>
+                        </StackPanel>
+                    </md:PopupBox>
+                </Grid>
+                <ListBox
+                    Grid.Row="2"
+                    Grid.Column="2"
+                    MinWidth="100"
+                    DisplayMemberPath="Name"
+                    ItemsSource="{Binding SelectedYear.Classes}"
+                    SelectedItem="{Binding SelectedClass, Mode=TwoWay}" />
+
+                <Grid Grid.Row="0" Grid.Column="4">
+                    <TextBlock
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Text="Eigenschaften" />
+                    <Button HorizontalAlignment="Right" Command="{Binding Print}">
+                        <md:PackIcon Kind="Printer" />
+                    </Button>
+                </Grid>
+                <StackPanel Grid.Row="2" Grid.Column="4">
                     <Grid>
-                        <ListBox
-                            MinWidth="100"
-                            DisplayMemberPath="Year"
-                            ItemsSource="{Binding AvailableYears}"
-                            SelectedItem="{Binding SelectedYear, Mode=TwoWay}" />
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition Height="10" />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="200" />
+                            <ColumnDefinition Width="10" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Text="Jahr" />
+                        <TextBlock
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Text="Beginn" />
+                        <TextBlock
+                            Grid.Row="2"
+                            Grid.Column="0"
+                            Text="Ende" />
+                        <TextBlock
+                            Grid.Row="3"
+                            Grid.Column="0"
+                            Text="Ferien" />
+                        <TextBlock
+                            Grid.Row="6"
+                            Grid.Column="0"
+                            Text="Klasse" />
+
+                        <TextBlock
+                            Grid.Row="0"
+                            Grid.Column="2"
+                            Text="{Binding SelectedYear.Year}" />
+                        <TextBlock
+                            Grid.Row="1"
+                            Grid.Column="2"
+                            Text="{Binding SelectedYear.YearStart}" />
+                        <TextBlock
+                            Grid.Row="2"
+                            Grid.Column="2"
+                            Text="{Binding SelectedYear.YearEnd}" />
+                        <ItemsControl
+                            Grid.Row="4"
+                            Grid.Column="2"
+                            ItemsSource="{Binding SelectedYear.Holidays}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition MinWidth="200" />
+                                            <ColumnDefinition MinWidth="200" />
+                                            <ColumnDefinition MinWidth="200" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="{Binding Start}" />
+                                        <TextBlock Grid.Column="1" Text="{Binding End}" />
+                                        <TextBlock Grid.Column="2" Text="{Binding Name}" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <TextBlock
+                            Grid.Row="6"
+                            Grid.Column="2"
+                            Text="{Binding SelectedClass.Name}" />
                     </Grid>
-                </GroupBox>
-
-                <GroupBox Grid.Column="2" BorderThickness="0">
-                    <GroupBox.HeaderTemplate>
-                        <DataTemplate>
-                            <Grid>
-                                <TextBlock
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Center"
-                                    Text="Klasse" />
-                                <md:PopupBox>
-                                    <md:PopupBox.ToggleContent>
-                                        <md:PackIcon Kind="AccountMultiple" />
-                                    </md:PopupBox.ToggleContent>
-                                    <StackPanel>
-                                        <Button Command="{Binding DataContext.AddClass, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}">
-                                            <md:PackIcon Kind="Plus" />
-                                        </Button>
-                                    </StackPanel>
-                                </md:PopupBox>
-                            </Grid>
-                        </DataTemplate>
-                    </GroupBox.HeaderTemplate>
-                    <ListBox
-                        MinWidth="100"
-                        DisplayMemberPath="Name"
-                        ItemsSource="{Binding SelectedYear.Classes}"
-                        SelectedItem="{Binding SelectedClass, Mode=TwoWay}" />
-                </GroupBox>
-
-                <GroupBox Grid.Column="4" BorderThickness="0">
-                    <GroupBox.HeaderTemplate>
-                        <DataTemplate>
-                            <Grid>
-                                <TextBlock
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Center"
-                                    Text="Eigenschaften" />
-                                <Button HorizontalAlignment="Right" Command="{Binding Print}">
-                                    <md:PackIcon Kind="Printer" />
-                                </Button>
-                            </Grid>
-                        </DataTemplate>
-                    </GroupBox.HeaderTemplate>
-                    <StackPanel DataContext="{Binding SelectedClass}">
-                        <StackPanel.Style>
-                            <Style TargetType="StackPanel">
+                    <Grid DockPanel.Dock="Top">
+                        <Grid.Style>
+                            <Style TargetType="Grid">
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding}" Value="{x:Null}">
+                                    <DataTrigger Binding="{Binding SelectedClass}" Value="{x:Null}">
                                         <Setter Property="IsEnabled" Value="False" />
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
-                        </StackPanel.Style>
-                        <Grid DockPanel.Dock="Top">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="10" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Text="Name" />
-                            <TextBlock
-                                Grid.Column="2"
-                                MinWidth="100"
-                                md:TextFieldAssist.HasTextFieldBox="True"
-                                Text="{Binding Name}" />
-                        </Grid>
-                        <Grid DockPanel.Dock="Top">
-                            <Grid.Resources>
-                                <Style BasedOn="{StaticResource MaterialDesignFlatPrimaryToggleButton}" TargetType="ToggleButton">
-                                    <Setter Property="Margin" Value="5,0" />
-                                </Style>
-                            </Grid.Resources>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <ToggleButton
-                                Grid.Column="0"
-                                Content="Montag"
-                                DockPanel.Dock="Top"
-                                IsChecked="{Binding IsMonday, Mode=TwoWay}" />
-                            <ToggleButton
-                                Grid.Column="1"
-                                Content="Dienstag"
-                                DockPanel.Dock="Top"
-                                IsChecked="{Binding IsTuesday, Mode=TwoWay}" />
-                            <ToggleButton
-                                Grid.Column="2"
-                                Content="Mittwoch"
-                                DockPanel.Dock="Top"
-                                IsChecked="{Binding IsWednesday, Mode=TwoWay}" />
-                            <ToggleButton
-                                Grid.Column="3"
-                                Content="Donnerstag"
-                                DockPanel.Dock="Top"
-                                IsChecked="{Binding IsThursday, Mode=TwoWay}" />
-                            <ToggleButton
-                                Grid.Column="4"
-                                Content="Freitag"
-                                DockPanel.Dock="Top"
-                                IsChecked="{Binding IsFriday, Mode=TwoWay}" />
-                        </Grid>
-                    </StackPanel>
-                </GroupBox>
+                        </Grid.Style>
+                        <Grid.Resources>
+                            <Style BasedOn="{StaticResource MaterialDesignFlatPrimaryToggleButton}" TargetType="ToggleButton">
+                                <Setter Property="Margin" Value="5,0" />
+                            </Style>
+                        </Grid.Resources>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <ToggleButton
+                            Grid.Column="0"
+                            Content="Montag"
+                            DockPanel.Dock="Top"
+                            IsChecked="{Binding IsMonday, Mode=TwoWay}" />
+                        <ToggleButton
+                            Grid.Column="1"
+                            Content="Dienstag"
+                            DockPanel.Dock="Top"
+                            IsChecked="{Binding IsTuesday, Mode=TwoWay}" />
+                        <ToggleButton
+                            Grid.Column="2"
+                            Content="Mittwoch"
+                            DockPanel.Dock="Top"
+                            IsChecked="{Binding IsWednesday, Mode=TwoWay}" />
+                        <ToggleButton
+                            Grid.Column="3"
+                            Content="Donnerstag"
+                            DockPanel.Dock="Top"
+                            IsChecked="{Binding IsThursday, Mode=TwoWay}" />
+                        <ToggleButton
+                            Grid.Column="4"
+                            Content="Freitag"
+                            DockPanel.Dock="Top"
+                            IsChecked="{Binding IsFriday, Mode=TwoWay}" />
+                    </Grid>
+                </StackPanel>
             </Grid>
         </DockPanel>
     </md:DialogHost>

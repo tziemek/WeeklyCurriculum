@@ -240,6 +240,14 @@ namespace WeeklyCurriculum.Wpf
             {
                 result.Classes = new ObservableCollection<SchoolClass>();
             }
+            if ( schoolYearData.Holidays != null )
+            {
+                result.Holidays = new ObservableCollection<Holiday>(schoolYearData.Holidays.Select(CreateHolidayFromData));
+            }
+            else
+            {
+                result.Holidays = new ObservableCollection<Holiday>();
+            }
             return result;
         }
 
@@ -265,6 +273,28 @@ namespace WeeklyCurriculum.Wpf
             {
                 result.Classes = new List<SchoolClassData>(schoolYear.Classes.Select(CreateSchoolClassData));
             }
+            if ( schoolYear.Holidays != null )
+            {
+                result.Holidays = new List<HolidayData>(schoolYear.Holidays.Select(CreateHolidayData));
+            }
+            return result;
+        }
+
+        private Holiday CreateHolidayFromData(HolidayData holidayData)
+        {
+            var result = new Holiday();
+            result.Name = holidayData.Name;
+            result.Start = holidayData.Start;
+            result.End = holidayData.End;
+            return result;
+        }
+
+        private HolidayData CreateHolidayData(Holiday holiday)
+        {
+            var result = new HolidayData();
+            result.Name = holiday.Name;
+            result.Start = holiday.Start;
+            result.End = holiday.End;
             return result;
         }
 
