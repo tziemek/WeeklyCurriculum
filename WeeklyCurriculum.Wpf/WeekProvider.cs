@@ -10,6 +10,7 @@ using NodaTime.Calendars;
 namespace WeeklyCurriculum.Wpf
 {
     [Export]
+    [PartCreationPolicy(CreationPolicy.Shared)]
     public class WeekProvider
     {
         public List<Week> GetAvailableWeeks(int year)

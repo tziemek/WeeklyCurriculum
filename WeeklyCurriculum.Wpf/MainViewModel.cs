@@ -13,22 +13,26 @@ using WeeklyCurriculum.Wpf.Data;
 namespace WeeklyCurriculum.Wpf
 {
     [Export]
+    [PartCreationPolicy(CreationPolicy.Shared)]
     public class MainViewModel : ViewModelBase
     {
         private readonly WeekProvider weekProvider;
         private readonly ISchoolClassProvider schoolClassProvider;
+        private readonly ReportGenerator reportGenerator;
         private Week selectedWeek;
         private SchoolClassData selectedClass;
         private SchoolClass editingClass;
         private ICommand addClassCommand;
         private ICommand saveClassCommand;
         private ICommand dayCheckedCommand;
+        private ICommand printCommand;
 
         [ImportingConstructor]
-        public MainViewModel(WeekProvider weekProvider, ISchoolClassProvider schoolClassProvider)
+        public MainViewModel(WeekProvider weekProvider, ISchoolClassProvider schoolClassProvider, ReportGenerator reportGenerator)
         {
             this.weekProvider = weekProvider;
             this.schoolClassProvider = schoolClassProvider;
+            this.reportGenerator = reportGenerator;
             this.AvailableWeeks = new ObservableCollection<Week>(this.weekProvider.GetAvailableWeeks(2017));
             this.SelectedWeek = this.SelectCurrentWeek(this.AvailableWeeks, SystemClock.Instance.GetCurrentInstant());
             this.AvailableClasses = new ObservableCollection<SchoolClassData>(this.schoolClassProvider.GetAvailableClasses());
@@ -83,6 +87,14 @@ namespace WeeklyCurriculum.Wpf
             }
         }
 
+        public ICommand Print
+        {
+            get
+            {
+                return this.printCommand ?? (this.printCommand = new RelayCommand(this.OnPrint));
+            }
+        }
+
         public ICommand DayChecked
         {
             get
@@ -105,6 +117,11 @@ namespace WeeklyCurriculum.Wpf
                 this.RaisePropertyChanged();
                 this.UpdateEditingClass();
             }
+        }
+
+        private void OnPrint(object obj)
+        {
+            this.reportGenerator.Print(this.EditingClass);
         }
 
         private void UpdateEditingClass()

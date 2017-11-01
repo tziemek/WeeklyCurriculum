@@ -120,6 +120,7 @@
                                 StaysOpen="False">
                                 <StackPanel>
                                     <Button Command="{Binding DataContext.SaveClass, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" Content="Speichern" />
+                                    <Button Command="{Binding DataContext.Print, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" Content="Drucken" />
                                 </StackPanel>
                             </md:PopupBox>
                         </Grid>

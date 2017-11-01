@@ -62,6 +62,7 @@
     </Compile>
     <Compile Include="ISchoolClassProvider.cs" />
     <Compile Include="RelayCommand.cs" />
+    <Compile Include="ReportGenerator.cs" />
     <Compile Include="SchoolClass.cs" />
     <Compile Include="SingleInputDialogViewModel.cs" />
     <Compile Include="ViewModelBase.cs" />
@@ -116,6 +117,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="itext7">
+      <Version>7.0.5</Version>
+    </PackageReference>
     <PackageReference Include="log4net">
       <Version>2.0.8</Version>
     </PackageReference>

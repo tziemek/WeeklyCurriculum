@@ -13,6 +13,7 @@ namespace WeeklyCurriculum.Wpf
     }
 
     [Export(typeof(ISchoolClassProvider))]
+    [PartCreationPolicy(CreationPolicy.Shared)]
     public class FileSchoolClassProvider : ISchoolClassProvider
     {
         public List<SchoolClassData> GetAvailableClasses()
