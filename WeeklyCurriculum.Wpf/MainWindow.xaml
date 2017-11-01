@@ -187,36 +187,6 @@
                             DockPanel.Dock="Top"
                             IsChecked="{Binding IsFriday, Mode=TwoWay}" />
                     </Grid>
-                    <UniformGrid Margin="0,5" Columns="{Binding DayCount}">
-                        <UniformGrid.Resources>
-                            <Style BasedOn="{StaticResource {x:Type TextBox}}" TargetType="TextBox">
-                                <Setter Property="AcceptsReturn" Value="True" />
-                                <Setter Property="TextWrapping" Value="Wrap" />
-                                <Setter Property="Margin" Value="5,0" />
-                                <Setter Property="md:TextFieldAssist.HasTextFieldBox" Value="True" />
-                            </Style>
-                        </UniformGrid.Resources>
-                        <TextBox
-                            md:HintAssist.Hint="Montag"
-                            Text="{Binding Monday, Mode=TwoWay}"
-                            Visibility="{Binding IsMonday, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                        <TextBox
-                            md:HintAssist.Hint="Dienstag"
-                            Text="{Binding Tuesday, Mode=TwoWay}"
-                            Visibility="{Binding IsTuesday, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                        <TextBox
-                            md:HintAssist.Hint="Mittwoch"
-                            Text="{Binding Wednesday, Mode=TwoWay}"
-                            Visibility="{Binding IsWednesday, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                        <TextBox
-                            md:HintAssist.Hint="Donnerstag"
-                            Text="{Binding Thursday, Mode=TwoWay}"
-                            Visibility="{Binding IsThursday, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                        <TextBox
-                            md:HintAssist.Hint="Freitag"
-                            Text="{Binding Friday, Mode=TwoWay}"
-                            Visibility="{Binding IsFriday, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                    </UniformGrid>
                 </StackPanel>
             </GroupBox>
         </Grid>

@@ -11,11 +11,6 @@ namespace WeeklyCurriculum.Wpf
         private bool isWednesday;
         private bool isThursday;
         private bool isFriday;
-        private string monday;
-        private string tuesday;
-        private string wednesday;
-        private string thursday;
-        private string friday;
         private int dayCount;
 
         public string Name
@@ -112,52 +107,6 @@ namespace WeeklyCurriculum.Wpf
             set
             {
                 this.dayCount = value;
-                this.RaisePropertyChanged();
-            }
-        }
-
-        public string Monday
-        {
-            get => this.monday;
-            set
-            {
-                this.monday = value;
-                this.RaisePropertyChanged();
-            }
-        }
-        public string Tuesday
-        {
-            get => this.tuesday;
-            set
-            {
-                this.tuesday = value;
-                this.RaisePropertyChanged();
-            }
-        }
-        public string Wednesday
-        {
-            get => this.wednesday;
-            set
-            {
-                this.wednesday = value;
-                this.RaisePropertyChanged();
-            }
-        }
-        public string Thursday
-        {
-            get => this.thursday;
-            set
-            {
-                this.thursday = value;
-                this.RaisePropertyChanged();
-            }
-        }
-        public string Friday
-        {
-            get => this.friday;
-            set
-            {
-                this.friday = value;
                 this.RaisePropertyChanged();
             }
         }

@@ -8,17 +8,17 @@ namespace WeeklyCurriculum.Wpf
 {
     public interface ISchoolClassProvider
     {
-        List<SchoolClassData> GetAvailableClasses();
-        bool SaveClasses(IEnumerable<SchoolClassData> classes);
+        List<SchoolYearData> GetSchoolYears();
+        bool SaveSchoolYears(IEnumerable<SchoolYearData> schoolYears);
     }
 
     [Export(typeof(ISchoolClassProvider))]
     [PartCreationPolicy(CreationPolicy.Shared)]
     public class FileSchoolClassProvider : ISchoolClassProvider
     {
-        public List<SchoolClassData> GetAvailableClasses()
+        public List<SchoolYearData> GetSchoolYears()
         {
-            var result = new List<SchoolClassData>();
+            var result = new List<SchoolYearData>();
             if (File.Exists("db.json"))
             {
                 var ser = new JsonSerializer();
@@ -26,14 +26,14 @@ namespace WeeklyCurriculum.Wpf
                 {
                     using (JsonReader reader = new JsonTextReader(sr))
                     {
-                        result = ser.Deserialize<List<SchoolClassData>>(reader);
+                        result = ser.Deserialize<List<SchoolYearData>>(reader);
                     }
                 }
             }
             return result;
         }
 
-        public bool SaveClasses(IEnumerable<SchoolClassData> classes)
+        public bool SaveSchoolYears(IEnumerable<SchoolYearData> schoolYears)
         {
             var result = false;
             var ser = new JsonSerializer();
@@ -42,7 +42,7 @@ namespace WeeklyCurriculum.Wpf
             {
                 using (JsonWriter writer = new JsonTextWriter(sw))
                 {
-                    ser.Serialize(writer, classes);
+                    ser.Serialize(writer, schoolYears);
                     result = true;
                 }
             }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
 using System.Linq;
+using System.Text;
 using System.Windows.Input;
 using ControlzEx;
 using MaterialDesignThemes.Wpf;
@@ -19,13 +20,15 @@ namespace WeeklyCurriculum.Wpf
         private readonly WeekProvider weekProvider;
         private readonly ISchoolClassProvider schoolClassProvider;
         private readonly ReportGenerator reportGenerator;
-        private Week selectedWeek;
+
         private SchoolClassData selectedClass;
+        private SchoolYearData selectedYear;
         private SchoolClass editingClass;
         private ICommand addClassCommand;
         private ICommand saveClassCommand;
         private ICommand dayCheckedCommand;
         private ICommand printCommand;
+        private ICommand addYearCommand;
 
         [ImportingConstructor]
         public MainViewModel(WeekProvider weekProvider, ISchoolClassProvider schoolClassProvider, ReportGenerator reportGenerator)
@@ -33,10 +36,12 @@ namespace WeeklyCurriculum.Wpf
             this.weekProvider = weekProvider;
             this.schoolClassProvider = schoolClassProvider;
             this.reportGenerator = reportGenerator;
-            this.AvailableWeeks = new ObservableCollection<Week>(this.weekProvider.GetAvailableWeeks(2017));
-            this.SelectedWeek = this.SelectCurrentWeek(this.AvailableWeeks, SystemClock.Instance.GetCurrentInstant());
-            this.AvailableClasses = new ObservableCollection<SchoolClassData>(this.schoolClassProvider.GetAvailableClasses());
-            this.SelectedClass = this.AvailableClasses.FirstOrDefault();
+            this.AvailableYears = new ObservableCollection<SchoolYearData>(this.schoolClassProvider.GetSchoolYears());
+            this.SelectedYear = this.AvailableYears.FirstOrDefault();
+            if (this.SelectedYear != null && this.SelectedYear.Classes?.Count > 0)
+            {
+                this.SelectedClass = this.SelectedYear.Classes.FirstOrDefault();
+            }
         }
 
         private Week SelectCurrentWeek(ObservableCollection<Week> availableWeeks, Instant instant)
@@ -53,23 +58,7 @@ namespace WeeklyCurriculum.Wpf
         }
 
         public ObservableCollection<Week> AvailableWeeks { get; private set; }
-
-        public ObservableCollection<SchoolClassData> AvailableClasses { get; private set; }
-
-        public Week SelectedWeek
-        {
-            get => this.selectedWeek; set
-            {
-                if (this.selectedWeek == value)
-                {
-                    return;
-                }
-
-                this.selectedWeek = value;
-                this.RaisePropertyChanged();
-                this.UpdateEditingClass();
-            }
-        }
+        public ObservableCollection<SchoolYearData> AvailableYears { get; private set; }
 
         public ICommand AddClass
         {
@@ -84,6 +73,14 @@ namespace WeeklyCurriculum.Wpf
             get
             {
                 return this.saveClassCommand ?? (this.saveClassCommand = new RelayCommand(this.OnSaveClass));
+            }
+        }
+
+        public ICommand AddYear
+        {
+            get
+            {
+                return this.addYearCommand ?? (this.addYearCommand = new RelayCommand(this.OnAddYear));
             }
         }
 
@@ -118,32 +115,14 @@ namespace WeeklyCurriculum.Wpf
                 this.UpdateEditingClass();
             }
         }
-
-        private void OnPrint(object obj)
+        public SchoolYearData SelectedYear
         {
-            this.reportGenerator.Print(this.EditingClass);
-        }
-
-        private void UpdateEditingClass()
-        {
-            if (this.SelectedClass != null && this.SelectedWeek != null)
+            get => this.selectedYear;
+            private set
             {
-                if (this.EditingClass == null)
-                {
-                    this.EditingClass = new SchoolClass();
-                }
-                this.EditingClass.Name = this.SelectedClass.Name;
-                this.EditingClass.IsMonday = this.SelectedClass.IsMonday;
-                this.EditingClass.IsTuesday = this.SelectedClass.IsTuesday;
-                this.EditingClass.IsWednesday = this.SelectedClass.IsWednesday;
-                this.EditingClass.IsThursday = this.SelectedClass.IsThursday;
-                this.EditingClass.IsFriday = this.SelectedClass.IsFriday;
-                var matchingWeek = this.SelectedClass.SchoolWeeks?.FirstOrDefault(sw => sw.Year == this.SelectedWeek.WeekYear && sw.Week == this.SelectedWeek.WeekNumber);
-                this.EditingClass.Monday = matchingWeek?.Monday;
-                this.EditingClass.Tuesday = matchingWeek?.Tuesday;
-                this.EditingClass.Wednesday = matchingWeek?.Wednesday;
-                this.EditingClass.Thursday = matchingWeek?.Thursday;
-                this.EditingClass.Friday = matchingWeek?.Friday;
+                this.selectedYear = value;
+                this.RaisePropertyChanged();
+                this.UpdateEditingClass();
             }
         }
 
@@ -157,6 +136,71 @@ namespace WeeklyCurriculum.Wpf
             }
         }
 
+        private void OnPrint(object obj)
+        {
+            this.reportGenerator.Print(this.EditingClass);
+        }
+
+        private void UpdateEditingClass()
+        {
+            if (this.SelectedClass != null && this.SelectedYear != null)
+            {
+                if (this.EditingClass == null)
+                {
+                    this.EditingClass = new SchoolClass();
+                }
+                this.EditingClass.Name = this.SelectedClass.Name;
+                this.EditingClass.IsMonday = this.SelectedClass.IsMonday;
+                this.EditingClass.IsTuesday = this.SelectedClass.IsTuesday;
+                this.EditingClass.IsWednesday = this.SelectedClass.IsWednesday;
+                this.EditingClass.IsThursday = this.SelectedClass.IsThursday;
+                this.EditingClass.IsFriday = this.SelectedClass.IsFriday;
+            }
+        }
+
+        private async void OnAddYear(object obj)
+        {
+            var addNewYear = new NewYearInputDialogViewModel();
+            void OnCloseAddNewYear(object sender, DialogClosingEventArgs closingArgs)
+            {
+                if (closingArgs.Parameter is false)
+                {
+                    return;
+                }
+                var errors = new StringBuilder();
+                if (int.TryParse(addNewYear.Year, out var newYear))
+                {
+                    if (this.AvailableYears.Any(y => y.Year == newYear))
+                    {
+                        errors.AppendLine("Schuljahr ist bereits vorhanden.");
+                    }
+                }
+                if (addNewYear.Start == null || addNewYear.End == null)
+                {
+                    errors.AppendLine("Schuljahresanfang und -ende müssen gesetzt sein.");
+                }
+                if (errors.Length != 0)
+                {
+                    addNewYear.ErrorMessage = errors.ToString();
+                    closingArgs.Cancel();
+                }
+                else
+                {
+                    addNewYear.ErrorMessage = null;
+                }
+            }
+            var result = await DialogHost.Show(addNewYear, OnCloseAddNewYear);
+            if (result is true)
+            {
+                var year = new SchoolYearData();
+                year.Year = int.Parse(addNewYear.Year);
+                year.YearStart = LocalDate.FromDateTime(addNewYear.Start.GetValueOrDefault());
+                year.YearEnd = LocalDate.FromDateTime(addNewYear.End.GetValueOrDefault());
+                this.AvailableYears.Add(year);
+                this.SelectedYear = year;
+            }
+        }
+
         private void OnDayChecked(object obj)
         {
         }
@@ -165,7 +209,7 @@ namespace WeeklyCurriculum.Wpf
         {
             if (this.EditingClass != null)
             {
-                var classData = this.AvailableClasses.FirstOrDefault(c => c.Name == this.EditingClass.Name);
+                var classData = this.SelectedClass;
                 if (classData != null)
                 {
                     classData.IsMonday = this.EditingClass.IsMonday;
@@ -173,26 +217,9 @@ namespace WeeklyCurriculum.Wpf
                     classData.IsWednesday = this.EditingClass.IsWednesday;
                     classData.IsThursday = this.EditingClass.IsThursday;
                     classData.IsFriday = this.EditingClass.IsFriday;
-                    if (classData.SchoolWeeks == null)
-                    {
-                        classData.SchoolWeeks = new List<SchoolWeekData>();
-                    }
-                    var matchingWeek = classData.SchoolWeeks.FirstOrDefault(sw => sw.Year == this.SelectedWeek.WeekYear && sw.Week == this.SelectedWeek.WeekNumber);
-                    if (matchingWeek == null)
-                    {
-                        matchingWeek = new SchoolWeekData();
-                        matchingWeek.Year = this.SelectedWeek.WeekYear;
-                        matchingWeek.Week = this.SelectedWeek.WeekNumber;
-                        classData.SchoolWeeks.Add(matchingWeek);
-                    }
-                    matchingWeek.Monday = this.EditingClass.Monday;
-                    matchingWeek.Tuesday = this.EditingClass.Tuesday;
-                    matchingWeek.Wednesday = this.EditingClass.Wednesday;
-                    matchingWeek.Thursday = this.EditingClass.Thursday;
-                    matchingWeek.Friday = this.EditingClass.Friday;
                 }
             }
-            this.schoolClassProvider.SaveClasses(this.AvailableClasses);
+            this.schoolClassProvider.SaveSchoolYears(this.AvailableYears);
         }
 
         private async void OnAddClass(object obj)
@@ -204,9 +231,9 @@ namespace WeeklyCurriculum.Wpf
                 {
                     return;
                 }
-                if (this.AvailableClasses.Any(c => c.Name == addNewClass.Text))
+                if (this.SelectedYear.Classes.Any(c => c.Name == addNewClass.Text))
                 {
-                    addNewClass.ErrorMessage = "Name already taken";
+                    addNewClass.ErrorMessage = "Klasse ist bereits vorhanden.";
                     closingArgs.Cancel();
                 }
                 else
@@ -219,9 +246,8 @@ namespace WeeklyCurriculum.Wpf
             {
                 var schoolClass = new SchoolClassData();
                 schoolClass.Name = addNewClass.Text;
-                this.AvailableClasses.Add(schoolClass);
+                this.SelectedYear.Classes.Add(schoolClass);
                 this.SelectedClass = schoolClass;
-                // ToDo save class
             }
         }
     }

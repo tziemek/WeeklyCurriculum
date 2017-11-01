@@ -1,11 +1,4 @@
-﻿
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace WeeklyCurriculum.Wpf.Data
+﻿namespace WeeklyCurriculum.Wpf.Data
 {
     public class SchoolClassData
     {
@@ -15,6 +8,5 @@ namespace WeeklyCurriculum.Wpf.Data
         public bool IsWednesday { get; set; }
         public bool IsThursday { get; set; }
         public bool IsFriday { get; set; }
-        public List<SchoolWeekData> SchoolWeeks {get;set;}
     }
 }

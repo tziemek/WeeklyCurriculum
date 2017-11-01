@@ -42,28 +42,23 @@ namespace WeeklyCurriculum.Wpf
                 table.SetWidthPercent(100);
                 if (schoolClass.IsMonday)
                 {
-                    table.AddHeaderCell(nameof(schoolClass.Monday));
-                    table.AddCell(schoolClass.Monday);
+                    table.AddHeaderCell("Montag");
                 }
                 if (schoolClass.IsTuesday)
                 {
-                    table.AddHeaderCell(nameof(schoolClass.Tuesday));
-                    table.AddCell(schoolClass.Tuesday);
+                    table.AddHeaderCell("Dienstag");
                 }
                 if (schoolClass.IsWednesday)
                 {
-                    table.AddHeaderCell(nameof(schoolClass.Wednesday));
-                    table.AddCell(schoolClass.Wednesday);
+                    table.AddHeaderCell("Mittwoch");
                 }
                 if (schoolClass.IsThursday)
                 {
-                    table.AddHeaderCell(nameof(schoolClass.Thursday));
-                    table.AddCell(schoolClass.Thursday);
+                    table.AddHeaderCell("Donnerstag");
                 }
                 if (schoolClass.IsFriday)
                 {
-                    table.AddHeaderCell(nameof(schoolClass.Friday));
-                    table.AddCell(schoolClass.Friday);
+                    table.AddHeaderCell("Freitag");
                 }
 
                 document.Add(table);
