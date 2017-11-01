@@ -17,7 +17,7 @@ namespace WeeklyCurriculum.Wpf
     [PartCreationPolicy(CreationPolicy.Shared)]
     public class ReportGenerator
     {
-        public void Print(SchoolClass schoolClass)
+        public void Print(SchoolYear schoolYear, SchoolClass schoolClass)
         {
             var dest = @"test.pdf";
             using (var writer = new PdfWriter(dest))
@@ -31,9 +31,10 @@ namespace WeeklyCurriculum.Wpf
                 columns.Add(new UnitValue(UnitValue.PERCENT, 20));
 
                 //document.SetMargins(20, 20, 20, 20);
-                var columnWidthInPercent = 80.0 / schoolClass.DayCount;
+                var dayCount = this.GetDayCount(schoolClass);
+                var columnWidthInPercent = 80.0 / dayCount;
                 var columnDefinition = new UnitValue(UnitValue.PERCENT, (float)columnWidthInPercent);
-                for (var i = 0; i < schoolClass.DayCount; i++)
+                for (var i = 0; i < dayCount; i++)
                 {
                     columns.Add(columnDefinition);
                 }
@@ -85,6 +86,17 @@ namespace WeeklyCurriculum.Wpf
             //                new Paragraph(tokenizer.nextToken()).setFont(font)));
             //    }
             //}
+        }
+
+        private int GetDayCount(SchoolClass schoolClass)
+        {
+            var result = 0;
+            if (schoolClass.IsMonday) result++;
+            if (schoolClass.IsTuesday) result++;
+            if (schoolClass.IsWednesday) result++;
+            if (schoolClass.IsThursday) result++;
+            if (schoolClass.IsFriday) result++;
+            return result;
         }
     }
 }

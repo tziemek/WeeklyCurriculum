@@ -21,11 +21,10 @@ namespace WeeklyCurriculum.Wpf
         private readonly ISchoolClassProvider schoolClassProvider;
         private readonly ReportGenerator reportGenerator;
 
-        private SchoolClassData selectedClass;
-        private SchoolYearData selectedYear;
-        private SchoolClass editingClass;
+        private SchoolClass selectedClass;
+        private SchoolYear selectedYear;
         private ICommand addClassCommand;
-        private ICommand saveClassCommand;
+        private ICommand saveCommand;
         private ICommand dayCheckedCommand;
         private ICommand printCommand;
         private ICommand addYearCommand;
@@ -36,7 +35,15 @@ namespace WeeklyCurriculum.Wpf
             this.weekProvider = weekProvider;
             this.schoolClassProvider = schoolClassProvider;
             this.reportGenerator = reportGenerator;
-            this.AvailableYears = new ObservableCollection<SchoolYearData>(this.schoolClassProvider.GetSchoolYears());
+            var schoolYearData = this.schoolClassProvider.GetSchoolYears();
+            if (schoolYearData != null)
+            {
+                this.AvailableYears = new ObservableCollection<SchoolYear>(schoolYearData.Select(this.CreateSchoolYearFromData));
+            }
+            else
+            {
+                this.AvailableYears = new ObservableCollection<SchoolYear>();
+            }
             this.SelectedYear = this.AvailableYears.FirstOrDefault();
             if (this.SelectedYear != null && this.SelectedYear.Classes?.Count > 0)
             {
@@ -58,7 +65,7 @@ namespace WeeklyCurriculum.Wpf
         }
 
         public ObservableCollection<Week> AvailableWeeks { get; private set; }
-        public ObservableCollection<SchoolYearData> AvailableYears { get; private set; }
+        public ObservableCollection<SchoolYear> AvailableYears { get; private set; }
 
         public ICommand AddClass
         {
@@ -68,11 +75,11 @@ namespace WeeklyCurriculum.Wpf
             }
         }
 
-        public ICommand SaveClass
+        public ICommand Save
         {
             get
             {
-                return this.saveClassCommand ?? (this.saveClassCommand = new RelayCommand(this.OnSaveClass));
+                return this.saveCommand ?? (this.saveCommand = new RelayCommand(this.OnSave));
             }
         }
 
@@ -100,7 +107,7 @@ namespace WeeklyCurriculum.Wpf
             }
         }
 
-        public SchoolClassData SelectedClass
+        public SchoolClass SelectedClass
         {
             get => this.selectedClass;
             set
@@ -112,50 +119,21 @@ namespace WeeklyCurriculum.Wpf
 
                 this.selectedClass = value;
                 this.RaisePropertyChanged();
-                this.UpdateEditingClass();
             }
         }
-        public SchoolYearData SelectedYear
+        public SchoolYear SelectedYear
         {
             get => this.selectedYear;
-            private set
-            {
-                this.selectedYear = value;
-                this.RaisePropertyChanged();
-                this.UpdateEditingClass();
-            }
-        }
-
-        public SchoolClass EditingClass
-        {
-            get => this.editingClass;
             set
             {
-                this.editingClass = value;
+                this.selectedYear = value;
                 this.RaisePropertyChanged();
             }
         }
 
         private void OnPrint(object obj)
         {
-            this.reportGenerator.Print(this.EditingClass);
-        }
-
-        private void UpdateEditingClass()
-        {
-            if (this.SelectedClass != null && this.SelectedYear != null)
-            {
-                if (this.EditingClass == null)
-                {
-                    this.EditingClass = new SchoolClass();
-                }
-                this.EditingClass.Name = this.SelectedClass.Name;
-                this.EditingClass.IsMonday = this.SelectedClass.IsMonday;
-                this.EditingClass.IsTuesday = this.SelectedClass.IsTuesday;
-                this.EditingClass.IsWednesday = this.SelectedClass.IsWednesday;
-                this.EditingClass.IsThursday = this.SelectedClass.IsThursday;
-                this.EditingClass.IsFriday = this.SelectedClass.IsFriday;
-            }
+            this.reportGenerator.Print(this.SelectedYear, this.SelectedClass);
         }
 
         private async void OnAddYear(object obj)
@@ -175,6 +153,10 @@ namespace WeeklyCurriculum.Wpf
                         errors.AppendLine("Schuljahr ist bereits vorhanden.");
                     }
                 }
+                else
+                {
+                    errors.AppendLine("Schuljahr muss gesetzt sein.");
+                }
                 if (addNewYear.Start == null || addNewYear.End == null)
                 {
                     errors.AppendLine("Schuljahresanfang und -ende müssen gesetzt sein.");
@@ -192,7 +174,7 @@ namespace WeeklyCurriculum.Wpf
             var result = await DialogHost.Show(addNewYear, OnCloseAddNewYear);
             if (result is true)
             {
-                var year = new SchoolYearData();
+                var year = new SchoolYear();
                 year.Year = int.Parse(addNewYear.Year);
                 year.YearStart = LocalDate.FromDateTime(addNewYear.Start.GetValueOrDefault());
                 year.YearEnd = LocalDate.FromDateTime(addNewYear.End.GetValueOrDefault());
@@ -205,21 +187,10 @@ namespace WeeklyCurriculum.Wpf
         {
         }
 
-        private void OnSaveClass(object obj)
+        private void OnSave(object obj)
         {
-            if (this.EditingClass != null)
-            {
-                var classData = this.SelectedClass;
-                if (classData != null)
-                {
-                    classData.IsMonday = this.EditingClass.IsMonday;
-                    classData.IsTuesday = this.EditingClass.IsTuesday;
-                    classData.IsWednesday = this.EditingClass.IsWednesday;
-                    classData.IsThursday = this.EditingClass.IsThursday;
-                    classData.IsFriday = this.EditingClass.IsFriday;
-                }
-            }
-            this.schoolClassProvider.SaveSchoolYears(this.AvailableYears);
+            var schoolYearData = this.AvailableYears.Select(CreateSchoolYearData);
+            this.schoolClassProvider.SaveSchoolYears(schoolYearData);
         }
 
         private async void OnAddClass(object obj)
@@ -230,6 +201,10 @@ namespace WeeklyCurriculum.Wpf
                 if (closingArgs.Parameter is false)
                 {
                     return;
+                }
+                if (this.SelectedYear.Classes == null)
+                {
+                    this.SelectedYear.Classes = new ObservableCollection<SchoolClass>();
                 }
                 if (this.SelectedYear.Classes.Any(c => c.Name == addNewClass.Text))
                 {
@@ -244,11 +219,65 @@ namespace WeeklyCurriculum.Wpf
             var result = await DialogHost.Show(addNewClass, OnCloseAddNewClass);
             if (result is true && !string.IsNullOrWhiteSpace(addNewClass.Text))
             {
-                var schoolClass = new SchoolClassData();
+                var schoolClass = new SchoolClass();
                 schoolClass.Name = addNewClass.Text;
                 this.SelectedYear.Classes.Add(schoolClass);
                 this.SelectedClass = schoolClass;
             }
+        }
+
+        private SchoolYear CreateSchoolYearFromData(SchoolYearData schoolYearData)
+        {
+            var result = new SchoolYear();
+            result.Year = schoolYearData.Year;
+            result.YearStart = schoolYearData.YearStart;
+            result.YearEnd = schoolYearData.YearEnd;
+            if (schoolYearData.Classes != null)
+            {
+                result.Classes = new ObservableCollection<SchoolClass>(schoolYearData.Classes.Select(CreateSchoolClassFromData));
+            }
+            else
+            {
+                result.Classes = new ObservableCollection<SchoolClass>();
+            }
+            return result;
+        }
+
+        private SchoolClass CreateSchoolClassFromData(SchoolClassData schoolClassData)
+        {
+            var result = new SchoolClass();
+            result.Name = schoolClassData.Name;
+            result.IsMonday = schoolClassData.IsMonday;
+            result.IsTuesday = schoolClassData.IsTuesday;
+            result.IsWednesday = schoolClassData.IsWednesday;
+            result.IsThursday = schoolClassData.IsThursday;
+            result.IsFriday = schoolClassData.IsFriday;
+            return result;
+        }
+
+        private SchoolYearData CreateSchoolYearData(SchoolYear schoolYear)
+        {
+            var result = new SchoolYearData();
+            result.Year = schoolYear.Year;
+            result.YearStart = schoolYear.YearStart;
+            result.YearEnd = schoolYear.YearEnd;
+            if (schoolYear.Classes != null)
+            {
+                result.Classes = new List<SchoolClassData>(schoolYear.Classes.Select(CreateSchoolClassData));
+            }
+            return result;
+        }
+
+        private SchoolClassData CreateSchoolClassData(SchoolClass schoolClass)
+        {
+            var result = new SchoolClassData();
+            result.Name = schoolClass.Name;
+            result.IsMonday = schoolClass.IsMonday;
+            result.IsTuesday = schoolClass.IsTuesday;
+            result.IsWednesday = schoolClass.IsWednesday;
+            result.IsThursday = schoolClass.IsThursday;
+            result.IsFriday = schoolClass.IsFriday;
+            return result;
         }
     }
 }

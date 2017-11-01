@@ -65,6 +65,7 @@
     <Compile Include="ReportGenerator.cs" />
     <Compile Include="SchoolClass.cs" />
     <Compile Include="NewYearInputDialogViewModel.cs" />
+    <Compile Include="SchoolYear.cs" />
     <Compile Include="SingleInputDialogViewModel.cs" />
     <Compile Include="ViewModelBase.cs" />
     <Compile Include="Week.cs" />

@@ -11,7 +11,6 @@ namespace WeeklyCurriculum.Wpf
         private bool isWednesday;
         private bool isThursday;
         private bool isFriday;
-        private int dayCount;
 
         public string Name
         {
@@ -34,7 +33,6 @@ namespace WeeklyCurriculum.Wpf
                     return;
                 this.isMonday = value;
                 this.RaisePropertyChanged();
-                this.UpdateDayCount();
             }
         }
 
@@ -47,7 +45,6 @@ namespace WeeklyCurriculum.Wpf
                     return;
                 this.isTuesday = value;
                 this.RaisePropertyChanged();
-                this.UpdateDayCount();
             }
         }
 
@@ -60,7 +57,6 @@ namespace WeeklyCurriculum.Wpf
                     return;
                 this.isWednesday = value;
                 this.RaisePropertyChanged();
-                this.UpdateDayCount();
             }
         }
 
@@ -73,7 +69,6 @@ namespace WeeklyCurriculum.Wpf
                     return;
                 this.isThursday = value;
                 this.RaisePropertyChanged();
-                this.UpdateDayCount();
             }
         }
 
@@ -85,28 +80,6 @@ namespace WeeklyCurriculum.Wpf
                 if (this.isFriday == value)
                     return;
                 this.isFriday = value;
-                this.RaisePropertyChanged();
-                this.UpdateDayCount();
-            }
-        }
-
-        private void UpdateDayCount()
-        {
-            var count = 0;
-            if (this.IsMonday) count++;
-            if (this.IsTuesday) count++;
-            if (this.IsWednesday) count++;
-            if (this.IsThursday) count++;
-            if (this.IsFriday) count++;
-            this.DayCount = count;
-        }
-
-        public int DayCount
-        {
-            get => this.dayCount;
-            set
-            {
-                this.dayCount = value;
                 this.RaisePropertyChanged();
             }
         }
