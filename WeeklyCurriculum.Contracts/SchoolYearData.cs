@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using NodaTime;
 
-namespace WeeklyCurriculum.Wpf.Data
+namespace WeeklyCurriculum.Contracts
 {
     public class SchoolYearData
     {

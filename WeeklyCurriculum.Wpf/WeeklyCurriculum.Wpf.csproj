@@ -35,14 +35,12 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Net.Http" />
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
@@ -55,23 +53,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Data\HolidayData.cs" />
-    <Compile Include="Data\SchoolClassData.cs" />
-    <Compile Include="Data\SchoolYearData.cs" />
     <Compile Include="DialogView.xaml.cs">
       <DependentUpon>DialogView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Holiday.cs" />
-    <Compile Include="ISchoolClassProvider.cs" />
     <Compile Include="RelayCommand.cs" />
-    <Compile Include="ReportGenerator.cs" />
-    <Compile Include="SchoolClass.cs" />
     <Compile Include="NewYearInputDialogViewModel.cs" />
-    <Compile Include="SchoolYear.cs" />
     <Compile Include="SingleInputDialogViewModel.cs" />
-    <Compile Include="ViewModelBase.cs" />
-    <Compile Include="Week.cs" />
-    <Compile Include="WeekProvider.cs" />
     <Page Include="DialogView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -121,6 +108,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Ical.Net">
+      <Version>2.3.4</Version>
+    </PackageReference>
     <PackageReference Include="itext7">
       <Version>7.0.5</Version>
     </PackageReference>
@@ -132,6 +122,9 @@
     </PackageReference>
     <PackageReference Include="MaterialDesignThemes">
       <Version>2.3.1.953</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Composition">
+      <Version>1.0.31</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>10.0.3</Version>
@@ -145,6 +138,16 @@
     <PackageReference Include="System.Windows.Interactivity.WPF">
       <Version>2.0.20525</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WeeklyCurriculum.Components\WeeklyCurriculum.Components.csproj">
+      <Project>{58253293-9476-4d90-8a7c-ccf0b4a39fad}</Project>
+      <Name>WeeklyCurriculum.Components</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WeeklyCurriculum.Contracts\WeeklyCurriculum.Contracts.csproj">
+      <Project>{cfe2cf22-6189-404d-ae1b-d1471da03cc5}</Project>
+      <Name>WeeklyCurriculum.Contracts</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel.Composition;
+using System.Composition;
 using System.IO;
 using Newtonsoft.Json;
-using WeeklyCurriculum.Wpf.Data;
+using WeeklyCurriculum.Contracts;
 
-namespace WeeklyCurriculum.Wpf
+namespace WeeklyCurriculum.Components
 {
     public interface ISchoolClassProvider
     {
@@ -13,7 +13,6 @@ namespace WeeklyCurriculum.Wpf
     }
 
     [Export(typeof(ISchoolClassProvider))]
-    [PartCreationPolicy(CreationPolicy.Shared)]
     public class FileSchoolClassProvider : ISchoolClassProvider
     {
         public List<SchoolYearData> GetSchoolYears()

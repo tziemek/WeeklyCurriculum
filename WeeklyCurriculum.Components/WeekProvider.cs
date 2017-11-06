@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.Composition;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Composition;
 using NodaTime;
 using NodaTime.Calendars;
+using WeeklyCurriculum.Contracts;
 
-namespace WeeklyCurriculum.Wpf
+namespace WeeklyCurriculum.Components
 {
     [Export]
-    [PartCreationPolicy(CreationPolicy.Shared)]
     public class WeekProvider
     {
         public List<Week> GetAvailableWeeks(int year)

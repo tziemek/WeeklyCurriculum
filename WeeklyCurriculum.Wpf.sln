@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27004.2006
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeeklyCurriculum.Wpf", "WeeklyCurriculum.Wpf.csproj", "{7C3BA655-AF83-4B29-98BF-EF6D050C9102}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeeklyCurriculum.Wpf", "WeeklyCurriculum.Wpf\WeeklyCurriculum.Wpf.csproj", "{7C3BA655-AF83-4B29-98BF-EF6D050C9102}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeeklyCurriculum.Contracts", "..\WeeklyCurriculum.Contracts\WeeklyCurriculum.Contracts.csproj", "{CFE2CF22-6189-404D-AE1B-D1471DA03CC5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeeklyCurriculum.Contracts", "WeeklyCurriculum.Contracts\WeeklyCurriculum.Contracts.csproj", "{CFE2CF22-6189-404D-AE1B-D1471DA03CC5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeeklyCurriculum.Components", "WeeklyCurriculum.Components\WeeklyCurriculum.Components.csproj", "{58253293-9476-4D90-8A7C-CCF0B4A39FAD}"
 EndProject

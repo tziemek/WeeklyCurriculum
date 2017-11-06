@@ -1,6 +1,6 @@
 ﻿using NodaTime;
 
-namespace WeeklyCurriculum.Wpf
+namespace WeeklyCurriculum.Contracts
 {
     public class Holiday : ViewModelBase
     {

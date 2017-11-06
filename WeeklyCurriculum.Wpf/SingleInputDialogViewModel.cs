@@ -1,4 +1,6 @@
-﻿namespace WeeklyCurriculum.Wpf
+﻿using WeeklyCurriculum.Contracts;
+
+namespace WeeklyCurriculum.Wpf
 {
     public class SingleInputDialogViewModel : ViewModelBase
     {

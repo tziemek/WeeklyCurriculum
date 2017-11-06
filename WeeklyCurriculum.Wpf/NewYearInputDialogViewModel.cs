@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Windows.Input;
-using MaterialDesignThemes.Wpf;
-using NodaTime;
+using WeeklyCurriculum.Contracts;
 
 namespace WeeklyCurriculum.Wpf
 {

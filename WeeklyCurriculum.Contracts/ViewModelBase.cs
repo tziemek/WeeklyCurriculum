@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace WeeklyCurriculum.Wpf
+namespace WeeklyCurriculum.Contracts
 {
     public class ViewModelBase : INotifyPropertyChanged
     {

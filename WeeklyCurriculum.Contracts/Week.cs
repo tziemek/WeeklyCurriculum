@@ -1,7 +1,6 @@
-﻿using System;
-using NodaTime;
+﻿using NodaTime;
 
-namespace WeeklyCurriculum.Wpf
+namespace WeeklyCurriculum.Contracts
 {
     public class Week : ViewModelBase
     {

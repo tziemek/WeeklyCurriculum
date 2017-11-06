@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-
-namespace WeeklyCurriculum.Wpf
+﻿namespace WeeklyCurriculum.Contracts
 {
     public class SchoolClass : ViewModelBase
     {

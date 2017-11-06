@@ -1,4 +1,4 @@
-﻿namespace WeeklyCurriculum.Wpf.Data
+﻿namespace WeeklyCurriculum.Contracts
 {
     public class SchoolClassData
     {

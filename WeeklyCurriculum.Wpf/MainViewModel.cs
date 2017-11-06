@@ -2,25 +2,23 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
+using System.Composition;
 using System.Linq;
 using System.Text;
 using System.Windows.Input;
 using ControlzEx;
 using MaterialDesignThemes.Wpf;
+using Microsoft.Win32;
 using NodaTime;
 using NodaTime.Calendars;
-using WeeklyCurriculum.Wpf.Data;
+using WeeklyCurriculum.Components;
+using WeeklyCurriculum.Contracts;
 
 namespace WeeklyCurriculum.Wpf
 {
-    [Export]
-    [PartCreationPolicy(CreationPolicy.Shared)]
-    public class MainViewModel : ViewModelBase
+    [System.Composition.Export]
+    public class MainViewModel : ViewModelBase, IPartImportsSatisfiedNotification
     {
-        private readonly WeekProvider weekProvider;
-        private readonly ISchoolClassProvider schoolClassProvider;
-        private readonly ReportGenerator reportGenerator;
-
         private SchoolClass selectedClass;
         private SchoolYear selectedYear;
         private ICommand addClassCommand;
@@ -28,28 +26,34 @@ namespace WeeklyCurriculum.Wpf
         private ICommand dayCheckedCommand;
         private ICommand printCommand;
         private ICommand addYearCommand;
+        private ICommand importHolidaysCommand;
+        private readonly WeekProvider weekProvider;
+        private readonly ISchoolClassProvider schoolClassProvider;
+        private readonly ReportGenerator reportGenerator;
+        private readonly IHolidayProvider holidayProvider;
+        private readonly HolidayManagement holidayManagement;
 
-        [ImportingConstructor]
-        public MainViewModel(WeekProvider weekProvider, ISchoolClassProvider schoolClassProvider, ReportGenerator reportGenerator)
+        [System.Composition.ImportingConstructor]
+        public MainViewModel(WeekProvider weekProvider, ISchoolClassProvider schoolClassProvider, ReportGenerator reportGenerator, IHolidayProvider holidayProvider, HolidayManagement holidayManagement)
         {
             this.weekProvider = weekProvider;
             this.schoolClassProvider = schoolClassProvider;
             this.reportGenerator = reportGenerator;
-            var schoolYearData = this.schoolClassProvider.GetSchoolYears();
-            if (schoolYearData != null)
-            {
-                this.AvailableYears = new ObservableCollection<SchoolYear>(schoolYearData.Select(this.CreateSchoolYearFromData));
-            }
-            else
-            {
-                this.AvailableYears = new ObservableCollection<SchoolYear>();
-            }
-            this.SelectedYear = this.AvailableYears.FirstOrDefault();
-            if (this.SelectedYear != null && this.SelectedYear.Classes?.Count > 0)
-            {
-                this.SelectedClass = this.SelectedYear.Classes.FirstOrDefault();
-            }
+            this.holidayProvider = holidayProvider;
+            this.holidayManagement = holidayManagement;
         }
+
+        //[System.Composition.Import(AllowDefault = true)]
+        //public WeekProvider WeekProvider { get; private set; }
+        //[System.Composition.Import]
+        //public ISchoolClassProvider SchoolClassProvider { get; private set; }
+        //[System.Composition.Import]
+        //public ReportGenerator ReportGenerator { get; private set; }
+        //[System.Composition.Import]
+        //public IHolidayProvider HolidayProvider { get; private set; }
+        //[System.Composition.Import]
+        //public HolidayManagement HolidayManagement { get; private set; }
+
 
         private Week SelectCurrentWeek(ObservableCollection<Week> availableWeeks, Instant instant)
         {
@@ -99,6 +103,14 @@ namespace WeeklyCurriculum.Wpf
             }
         }
 
+        public ICommand ImportHolidays
+        {
+            get
+            {
+                return this.importHolidaysCommand ?? (this.importHolidaysCommand = new RelayCommand(this.OnImportHolidays));
+            }
+        }
+
         public ICommand DayChecked
         {
             get
@@ -128,6 +140,34 @@ namespace WeeklyCurriculum.Wpf
             {
                 this.selectedYear = value;
                 this.RaisePropertyChanged();
+            }
+        }
+
+        private void OnImportHolidays(object obj)
+        {
+            if (this.SelectedYear == null)
+            {
+                throw new InvalidOperationException("A year must be selected.");
+            }
+            var ofd = new OpenFileDialog();
+            ofd.Filter = "Calendar files (*.ics)|*.ics";
+            //ofd.InitialDirectory = "";
+            if (ofd.ShowDialog() == true)
+            {
+                var filename = ofd.FileName;
+                var holidayData = this.holidayProvider.GetHolidaysFromFile(filename);
+
+                var holidaysToAdd = new List<Holiday>(this.SelectedYear.Holidays);
+                var relevantHolidayData = this.holidayManagement.FilterRelevantHolidays(holidayData, this.SelectedYear.YearStart, this.SelectedYear.YearEnd);
+                var consolidatedHolidayData = this.holidayManagement.ConsolidateHolidays(holidayData);
+
+                this.SelectedYear.Holidays.Clear();
+
+                var holidays = consolidatedHolidayData.OrderBy(h => h.Start).Select(this.CreateHolidayFromData);
+                foreach (var item in holidays)
+                {
+                    this.SelectedYear.Holidays.Add(item);
+                }
             }
         }
 
@@ -178,6 +218,8 @@ namespace WeeklyCurriculum.Wpf
                 year.Year = int.Parse(addNewYear.Year);
                 year.YearStart = LocalDate.FromDateTime(addNewYear.Start.GetValueOrDefault());
                 year.YearEnd = LocalDate.FromDateTime(addNewYear.End.GetValueOrDefault());
+                year.Classes = new ObservableCollection<SchoolClass>();
+                year.Holidays = new ObservableCollection<Holiday>();
                 this.AvailableYears.Add(year);
                 this.SelectedYear = year;
             }
@@ -240,7 +282,7 @@ namespace WeeklyCurriculum.Wpf
             {
                 result.Classes = new ObservableCollection<SchoolClass>();
             }
-            if ( schoolYearData.Holidays != null )
+            if (schoolYearData.Holidays != null)
             {
                 result.Holidays = new ObservableCollection<Holiday>(schoolYearData.Holidays.Select(CreateHolidayFromData));
             }
@@ -273,7 +315,7 @@ namespace WeeklyCurriculum.Wpf
             {
                 result.Classes = new List<SchoolClassData>(schoolYear.Classes.Select(CreateSchoolClassData));
             }
-            if ( schoolYear.Holidays != null )
+            if (schoolYear.Holidays != null)
             {
                 result.Holidays = new List<HolidayData>(schoolYear.Holidays.Select(CreateHolidayData));
             }
@@ -308,6 +350,25 @@ namespace WeeklyCurriculum.Wpf
             result.IsThursday = schoolClass.IsThursday;
             result.IsFriday = schoolClass.IsFriday;
             return result;
+        }
+
+        [OnImportsSatisfied]
+        public void OnImportsSatisfied()
+        {
+            var schoolYearData = this.schoolClassProvider.GetSchoolYears();
+            if (schoolYearData != null)
+            {
+                this.AvailableYears = new ObservableCollection<SchoolYear>(schoolYearData.Select(this.CreateSchoolYearFromData));
+            }
+            else
+            {
+                this.AvailableYears = new ObservableCollection<SchoolYear>();
+            }
+            this.SelectedYear = this.AvailableYears.FirstOrDefault();
+            if (this.SelectedYear != null && this.SelectedYear.Classes?.Count > 0)
+            {
+                this.SelectedClass = this.SelectedYear.Classes.FirstOrDefault();
+            }
         }
     }
 }

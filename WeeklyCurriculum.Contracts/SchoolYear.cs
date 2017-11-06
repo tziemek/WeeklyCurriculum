@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using NodaTime;
 
-namespace WeeklyCurriculum.Wpf
+namespace WeeklyCurriculum.Contracts
 {
     public class SchoolYear : ViewModelBase
     {

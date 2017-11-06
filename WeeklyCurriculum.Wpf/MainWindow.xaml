@@ -99,6 +99,9 @@
                             <Button Command="{Binding DeleteYear}" IsEnabled="False">
                                 <md:PackIcon Kind="Delete" />
                             </Button>
+                            <Button Command="{Binding ImportHolidays}">
+                                <md:PackIcon Kind="Import" />
+                            </Button>
                         </StackPanel>
                     </md:PopupBox>
                 </Grid>
@@ -246,27 +249,27 @@
                             Grid.Column="0"
                             Content="Montag"
                             DockPanel.Dock="Top"
-                            IsChecked="{Binding IsMonday, Mode=TwoWay}" />
+                            IsChecked="{Binding SelectedClass.IsMonday, Mode=TwoWay}" />
                         <ToggleButton
                             Grid.Column="1"
                             Content="Dienstag"
                             DockPanel.Dock="Top"
-                            IsChecked="{Binding IsTuesday, Mode=TwoWay}" />
+                            IsChecked="{Binding SelectedClass.IsTuesday, Mode=TwoWay}" />
                         <ToggleButton
                             Grid.Column="2"
                             Content="Mittwoch"
                             DockPanel.Dock="Top"
-                            IsChecked="{Binding IsWednesday, Mode=TwoWay}" />
+                            IsChecked="{Binding SelectedClass.IsWednesday, Mode=TwoWay}" />
                         <ToggleButton
                             Grid.Column="3"
                             Content="Donnerstag"
                             DockPanel.Dock="Top"
-                            IsChecked="{Binding IsThursday, Mode=TwoWay}" />
+                            IsChecked="{Binding SelectedClass.IsThursday, Mode=TwoWay}" />
                         <ToggleButton
                             Grid.Column="4"
                             Content="Freitag"
                             DockPanel.Dock="Top"
-                            IsChecked="{Binding IsFriday, Mode=TwoWay}" />
+                            IsChecked="{Binding SelectedClass.IsFriday, Mode=TwoWay}" />
                     </Grid>
                 </StackPanel>
             </Grid>
