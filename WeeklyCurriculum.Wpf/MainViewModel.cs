@@ -6,11 +6,9 @@ using System.Composition;
 using System.Linq;
 using System.Text;
 using System.Windows.Input;
-using ControlzEx;
 using MaterialDesignThemes.Wpf;
 using Microsoft.Win32;
 using NodaTime;
-using NodaTime.Calendars;
 using WeeklyCurriculum.Components;
 using WeeklyCurriculum.Contracts;
 
@@ -157,9 +155,9 @@ namespace WeeklyCurriculum.Wpf
                 var filename = ofd.FileName;
                 var holidayData = this.holidayProvider.GetHolidaysFromFile(filename);
 
-                var holidaysToAdd = new List<Holiday>(this.SelectedYear.Holidays);
+                var holidaysToAdd = new List<HolidayData>(this.SelectedYear.Holidays.Select(this.CreateHolidayData));
                 var relevantHolidayData = this.holidayManagement.FilterRelevantHolidays(holidayData, this.SelectedYear.YearStart, this.SelectedYear.YearEnd);
-                var consolidatedHolidayData = this.holidayManagement.ConsolidateHolidays(holidayData);
+                var consolidatedHolidayData = this.holidayManagement.ConsolidateHolidays(holidaysToAdd.Concat(relevantHolidayData).ToList());
 
                 this.SelectedYear.Holidays.Clear();
 

@@ -62,7 +62,6 @@ namespace WeeklyCurriculum
             Assert.Contains(new HolidayData { Start = new NodaTime.LocalDate(2017, 11, 6), End = new NodaTime.LocalDate(2017, 11, 10), Name="RestOfWeek" }, merged);
         }
 
-
         [Fact]
         public void SingleHolidayInBackIsMerged()
         {
@@ -78,6 +77,19 @@ namespace WeeklyCurriculum
             var merged = hm.ConsolidateHolidays(holidays);
             Assert.Equal(2, merged.Count);
             Assert.Contains(new HolidayData { Start = new NodaTime.LocalDate(2017, 11, 6), End = new NodaTime.LocalDate(2017, 11, 10), Name = "StartOfWeek" }, merged);
+        }
+
+        [Fact]
+        public void HolidayWithinHolidayIsDropped()
+        {
+            var hm = new HolidayManagement();
+            var initialData = new List<HolidayData>();
+            initialData.Add(new HolidayData { Start = new NodaTime.LocalDate(2017, 8, 1), End = new NodaTime.LocalDate(2017, 8, 7) });
+            initialData.Add(new HolidayData { Start = new NodaTime.LocalDate(2017, 8, 5), End = new NodaTime.LocalDate(2017, 8, 6) });
+            var holidays = hm.FilterRelevantHolidays(initialData, new NodaTime.LocalDate(2017, 3, 1), new NodaTime.LocalDate(2017, 12, 31));
+            Assert.Equal(2, holidays.Count);
+            var merged = hm.ConsolidateHolidays(holidays);
+            Assert.Equal(1, merged.Count);
         }
     }
 }

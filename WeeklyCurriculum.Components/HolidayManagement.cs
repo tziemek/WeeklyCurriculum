@@ -39,6 +39,13 @@ namespace WeeklyCurriculum.Components
             var result = new List<HolidayData>();
             foreach (var holiday in holidayData.OrderBy(h => h.Start))
             {
+                // contains
+                if ( result.Any(h => h.Start <= holiday.Start && h.End >= holiday.End))
+                {
+                    continue;
+                }
+
+                // neighbours
                 var neighbour = result.FirstOrDefault(h => h.End.PlusDays(1) == holiday.Start);
                 if (neighbour.Start == minDate && neighbour.End == minDate)
                 {
@@ -56,7 +63,7 @@ namespace WeeklyCurriculum.Components
                     continue;
                 }
 
-                if ( holiday.Start == holiday.End)
+                if (holiday.Start == holiday.End)
                 {
                     var index = result.IndexOf(neighbour);
                     result.RemoveAt(index);
