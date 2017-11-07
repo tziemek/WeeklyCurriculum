@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Composition;
+using System.Linq;
 using NodaTime;
 using WeeklyCurriculum.Contracts;
 
@@ -9,6 +10,8 @@ namespace WeeklyCurriculum.Components
     [Export]
     public class HolidayManagement
     {
+        private readonly LocalDate minDate = new LocalDate(1, 1, 1);
+
         public List<HolidayData> FilterRelevantHolidays(List<HolidayData> holidayData, LocalDate yearStart, LocalDate yearEnd)
         {
             var result = new List<HolidayData>();
@@ -33,27 +36,36 @@ namespace WeeklyCurriculum.Components
 
         public List<HolidayData> ConsolidateHolidays(List<HolidayData> holidayData)
         {
-            throw new NotImplementedException();
-            //var addToList = true;
-            //var neighbour = holidaysToAdd.FirstOrDefault(h => h.End.PlusDays(1) == holiday.Start);
-            //if (neighbour != null)
-            //{
-            //    if (neighbour.End == neighbour.Start)
-            //    {
-            //        neighbour.End = holiday.End;
-            //        neighbour.Name = holiday.Name;
-            //        addToList = false;
-            //    }
-            //    else if (holiday.End == holiday.Start)
-            //    {
-            //        neighbour.End = holiday.End;
-            //        addToList = false;
-            //    }
-            //}
-            //if (addToList)
-            //{
-            //    holidaysToAdd.Add(this.CreateHolidayFromData(holiday));
-            //}
+            var result = new List<HolidayData>();
+            foreach (var holiday in holidayData.OrderBy(h => h.Start))
+            {
+                var neighbour = result.FirstOrDefault(h => h.End.PlusDays(1) == holiday.Start);
+                if (neighbour.Start == minDate && neighbour.End == minDate)
+                {
+                    result.Add(holiday);
+                    continue;
+                }
+
+                if (neighbour.Start == neighbour.End)
+                {
+                    var index = result.IndexOf(neighbour);
+                    result.RemoveAt(index);
+                    neighbour.End = holiday.End;
+                    neighbour.Name = holiday.Name;
+                    result.Insert(index, neighbour);
+                    continue;
+                }
+
+                if ( holiday.Start == holiday.End)
+                {
+                    var index = result.IndexOf(neighbour);
+                    result.RemoveAt(index);
+                    neighbour.End = holiday.End;
+                    result.Insert(index, neighbour);
+                    continue;
+                }
+            }
+            return result;
         }
 
         private bool IsNotWeekend(IsoDayOfWeek dayOfWeek)

@@ -3,7 +3,7 @@ using NodaTime;
 
 namespace WeeklyCurriculum.Contracts
 {
-    public class SchoolYearData
+    public struct SchoolYearData
     {
         public int Year { get; set; }
         public LocalDate YearStart { get; set; }

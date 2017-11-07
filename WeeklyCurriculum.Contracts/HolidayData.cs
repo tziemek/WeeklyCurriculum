@@ -1,8 +1,10 @@
-﻿using NodaTime;
+﻿using System.Diagnostics;
+using NodaTime;
 
 namespace WeeklyCurriculum.Contracts
 {
-    public class HolidayData
+    [DebuggerDisplay("{Name}: {Start} - {End}")]
+    public struct HolidayData
     {
         public LocalDate Start { get; set; }
         public LocalDate End { get; set; }

@@ -1,6 +1,6 @@
 ﻿namespace WeeklyCurriculum.Contracts
 {
-    public class SchoolClassData
+    public struct SchoolClassData
     {
         public string Name { get; set; }
         public bool IsMonday { get; set; }
