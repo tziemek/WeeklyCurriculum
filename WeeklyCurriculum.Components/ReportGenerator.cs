@@ -14,6 +14,14 @@ namespace WeeklyCurriculum.Components
     [Export]
     public class ReportGenerator
     {
+        private readonly WeekProvider weekProvider;
+
+        [System.Composition.ImportingConstructor]
+        public ReportGenerator(WeekProvider weekProvider)
+        {
+            this.weekProvider = weekProvider;
+        }
+
         public void Print(SchoolYear schoolYear, SchoolClass schoolClass)
         {
             var dest = @"test.pdf";
@@ -33,41 +41,19 @@ namespace WeeklyCurriculum.Components
                     columns.Add(columnDefinition);
                 }
 
+                var allWeeks = this.weekProvider.GetAllWeeks(schoolYear.YearStart, schoolYear.YearEnd);
+                var schoolWeeks = this.GetSchoolWeeksWithoutHolidays(allWeeks, schoolYear.Holidays.Select(HolidayFactory.CreateFromHoliday));
+
+
                 var header = new Paragraph($"Klasse: {schoolClass.Name}");
                 document.Add(header);
 
-                var schoolWeeks = this.CreateSchoolWeeks(schoolYear);
-                var filteredWeeks = this.GetSchoolWeeksWithoutFullHolidayWeeks(schoolWeeks, schoolYear.Holidays);
                 //document.Add(new AreaBreak(AreaBreakType.NEXT_PAGE));
                 var table = this.CreateBaseTable(columns, schoolClass);
 
 
                 document.Add(table);
                 document.Close();
-            }
-        }
-
-        private IEnumerable<(LocalDate WeekStart, LocalDate WeekEnd)> GetSchoolWeeksWithoutFullHolidayWeeks(IEnumerable<(LocalDate WeekStart, LocalDate WeekEnd)> schoolWeeks, IList<Holiday> holidays)
-        {
-            foreach (var week in schoolWeeks)
-            {
-                if ( holidays.Any(h => h.Start <= week.WeekStart && h.End >= week.WeekEnd))
-                {
-                    continue;
-                }
-                yield return week;
-            }
-        }
-
-        private IEnumerable<(LocalDate WeekStart, LocalDate WeekEnd)> CreateSchoolWeeks(SchoolYear schoolYear)
-        {
-            var start = schoolYear.YearStart;
-            var end = start.Next(IsoDayOfWeek.Friday);
-            while (start < schoolYear.YearEnd)
-            {
-                yield return (start, end);
-                start = end.Next(IsoDayOfWeek.Monday);
-                end = start.Next(IsoDayOfWeek.Friday);
             }
         }
 

@@ -41,32 +41,6 @@ namespace WeeklyCurriculum.Wpf
             this.holidayManagement = holidayManagement;
         }
 
-        //[System.Composition.Import(AllowDefault = true)]
-        //public WeekProvider WeekProvider { get; private set; }
-        //[System.Composition.Import]
-        //public ISchoolClassProvider SchoolClassProvider { get; private set; }
-        //[System.Composition.Import]
-        //public ReportGenerator ReportGenerator { get; private set; }
-        //[System.Composition.Import]
-        //public IHolidayProvider HolidayProvider { get; private set; }
-        //[System.Composition.Import]
-        //public HolidayManagement HolidayManagement { get; private set; }
-
-
-        private Week SelectCurrentWeek(ObservableCollection<Week> availableWeeks, Instant instant)
-        {
-            foreach (var week in availableWeeks)
-            {
-                if (instant.InUtc().LocalDateTime.Date >= week.WeekStart && instant.InUtc().LocalDateTime.Date <= week.WeekEnd)
-                {
-                    return week;
-                }
-            }
-            // ToDo this will throw on weekends :(
-            throw new InvalidOperationException("No week found for current date");
-        }
-
-        public ObservableCollection<Week> AvailableWeeks { get; private set; }
         public ObservableCollection<SchoolYear> AvailableYears { get; private set; }
 
         public ICommand AddClass
@@ -155,13 +129,13 @@ namespace WeeklyCurriculum.Wpf
                 var filename = ofd.FileName;
                 var holidayData = this.holidayProvider.GetHolidaysFromFile(filename);
 
-                var holidaysToAdd = new List<HolidayData>(this.SelectedYear.Holidays.Select(this.CreateHolidayData));
+                var holidaysToAdd = new List<HolidayData>(this.SelectedYear.Holidays.Select(HolidayFactory.CreateFromHoliday));
                 var relevantHolidayData = this.holidayManagement.FilterRelevantHolidays(holidayData, this.SelectedYear.YearStart, this.SelectedYear.YearEnd);
                 var consolidatedHolidayData = this.holidayManagement.ConsolidateHolidays(holidaysToAdd.Concat(relevantHolidayData).ToList());
 
                 this.SelectedYear.Holidays.Clear();
 
-                var holidays = consolidatedHolidayData.OrderBy(h => h.Start).Select(this.CreateHolidayFromData);
+                var holidays = consolidatedHolidayData.OrderBy(h => h.Start).Select(HolidayFactory.CreateFromHolidayData);
                 foreach (var item in holidays)
                 {
                     this.SelectedYear.Holidays.Add(item);
@@ -282,7 +256,7 @@ namespace WeeklyCurriculum.Wpf
             }
             if (schoolYearData.Holidays != null)
             {
-                result.Holidays = new ObservableCollection<Holiday>(schoolYearData.Holidays.Select(CreateHolidayFromData));
+                result.Holidays = new ObservableCollection<Holiday>(schoolYearData.Holidays.Select(HolidayFactory.CreateFromHolidayData));
             }
             else
             {
@@ -315,26 +289,8 @@ namespace WeeklyCurriculum.Wpf
             }
             if (schoolYear.Holidays != null)
             {
-                result.Holidays = new List<HolidayData>(schoolYear.Holidays.Select(CreateHolidayData));
+                result.Holidays = new List<HolidayData>(schoolYear.Holidays.Select(HolidayFactory.CreateFromHoliday));
             }
-            return result;
-        }
-
-        private Holiday CreateHolidayFromData(HolidayData holidayData)
-        {
-            var result = new Holiday();
-            result.Name = holidayData.Name;
-            result.Start = holidayData.Start;
-            result.End = holidayData.End;
-            return result;
-        }
-
-        private HolidayData CreateHolidayData(Holiday holiday)
-        {
-            var result = new HolidayData();
-            result.Name = holiday.Name;
-            result.Start = holiday.Start;
-            result.End = holiday.End;
             return result;
         }
 
