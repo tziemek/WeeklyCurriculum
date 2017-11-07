@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
 using System.Composition.Convention;
 using System.Composition.Hosting;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
@@ -24,9 +26,11 @@ namespace WeeklyCurriculum.Wpf
             base.OnStartup(e);
             Application.Current.DispatcherUnhandledException += this.OnCurrentDispatcherUnhandledException;
 
-            var refAssemblies = new List<Assembly>();
-            refAssemblies.Add(typeof(Holiday).GetTypeInfo().Assembly);
-            refAssemblies.Add(typeof(WeekProvider).GetTypeInfo().Assembly);
+            var dlls = Directory
+                .GetFiles(Path.GetDirectoryName(typeof(App).Assembly.Location), "Weekly*.dll", SearchOption.TopDirectoryOnly);
+            var refAssemblies = dlls
+                .Select(Assembly.LoadFrom)
+                .ToList();
 
             var configuration = new ContainerConfiguration()
                         .WithAssembly(typeof(App).GetTypeInfo().Assembly)
@@ -34,10 +38,6 @@ namespace WeeklyCurriculum.Wpf
                         ;
             this.container = configuration.CreateContainer();
 
-            //var assCat = new AssemblyCatalog(typeof(App).Assembly);
-            //var cont = new CompositionContainer(assCat);
-            //var vm = new MainViewModel();
-            //var vm = cont.GetExportedValue<MainViewModel>();
             var vm = this.container.GetExport<MainViewModel>();
             var win = new MainWindow();
             win.DataContext = vm;
