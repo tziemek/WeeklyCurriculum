@@ -14,6 +14,10 @@ namespace WeeklyCurriculum.Components
             var rule = WeekYearRules.Iso;
             var result = new List<WeekData>();
             var currentStart = startOfSchoolYear;
+            if (currentStart.DayOfWeek != IsoDayOfWeek.Monday)
+            {
+                currentStart = currentStart.Previous(IsoDayOfWeek.Monday);
+            }
             while (currentStart < endOfSchoolYear)
             {
                 var currentEnd = currentStart.Next(IsoDayOfWeek.Friday);

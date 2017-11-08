@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Composition;
 using System.Linq;
+using System.Text;
 using iText.Kernel.Geom;
 using iText.Kernel.Pdf;
 using iText.Layout;
 using iText.Layout.Element;
 using iText.Layout.Properties;
 using NodaTime;
+using NodaTime.Text;
 using WeeklyCurriculum.Contracts;
 
 namespace WeeklyCurriculum.Components
@@ -16,11 +18,13 @@ namespace WeeklyCurriculum.Components
     public class ReportGenerator
     {
         private readonly WeekProvider weekProvider;
+        private readonly LocalDatePattern datePattern;
 
         [System.Composition.ImportingConstructor]
         public ReportGenerator(WeekProvider weekProvider)
         {
             this.weekProvider = weekProvider;
+            this.datePattern = LocalDatePattern.CreateWithCurrentCulture("d");
         }
 
         public void Print(SchoolYear schoolYear, SchoolClass schoolClass)
@@ -47,7 +51,7 @@ namespace WeeklyCurriculum.Components
                 var allWeeks = this.weekProvider.GetAllWeeks(schoolYear.YearStart, schoolYear.YearEnd);
 
                 var weeksWithDays = allWeeks.Select(this.GetDaysInWeek);
-                var weeksWithHolidayInformation = weeksWithDays.Select(o => this.PopulateWithHolidays(o, relevantDaysOfWeek, allHolidays));
+                var weeksWithHolidayInformation = weeksWithDays.Select(o => this.PopulateWithHolidays(o, relevantDaysOfWeek, allHolidays, schoolYear.YearStart));
 
                 var schoolWeekSections = new List<IEnumerable<(WeekData Week, List<(IsoDayOfWeek dayOfWeek, bool IsHoliday)> Days)>>();
                 var list = new List<(WeekData Week, List<(IsoDayOfWeek dayOfWeek, bool IsHoliday)> Days)>();
@@ -67,6 +71,7 @@ namespace WeeklyCurriculum.Components
                 }
                 schoolWeekSections.Add(list);
 
+                var weekCount = 1;
                 for (var i = 0; i < schoolWeekSections.Count; i++)
                 {
                     var schoolWeekSection = schoolWeekSections[i];
@@ -74,11 +79,11 @@ namespace WeeklyCurriculum.Components
                     var table = this.CreateBaseTable(columns, schoolClass);
                     foreach (var item in schoolWeekSection)
                     {
-                        table.AddCell($"{item.Week.WeekStart}-{item.Week.WeekEnd}");
+                        this.AddRowHeader(table, item.Week, weekCount++);
                         foreach (var day in item.Days)
                         {
                             var cell = new Cell();
-                            cell.SetMinHeight(50);
+                            cell.SetMinHeight(54);
                             if (day.IsHoliday)
                             {
                                 cell.SetBackgroundColor(iText.Kernel.Colors.ColorConstants.LIGHT_GRAY);
@@ -98,34 +103,39 @@ namespace WeeklyCurriculum.Components
             }
         }
 
-        private (WeekData Week, List<(IsoDayOfWeek dayOfWeek, bool IsHoliday)> Days) PopulateWithHolidays((WeekData Week, IEnumerable<LocalDate> DaysInWeek) weekWithDays, List<IsoDayOfWeek> relevantDaysOfWeek, List<LocalDate> allHolidays)
+        private void AddRowHeader(Table table, WeekData week, int weekCount)
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine($"SW: {weekCount}");
+            sb.Append(($"{this.datePattern.Format(week.WeekStart)} - {this.datePattern.Format(week.WeekEnd)}"));
+            var par = new Paragraph(sb.ToString());
+            par.SetVerticalAlignment(VerticalAlignment.MIDDLE);
+            var cell = new Cell();
+            cell.Add(par);
+            cell.SetVerticalAlignment(VerticalAlignment.MIDDLE);
+            table.AddCell(cell);
+        }
+
+        private (WeekData Week, List<(IsoDayOfWeek dayOfWeek, bool IsHoliday)> Days) PopulateWithHolidays((WeekData Week, IEnumerable<LocalDate> DaysInWeek) weekWithDays, List<IsoDayOfWeek> relevantDaysOfWeek, List<LocalDate> allHolidays, LocalDate startOfYear)
         {
             var days = new List<(IsoDayOfWeek dayOfWeek, bool IsHoliday)>();
-            if (weekWithDays.Week.WeekStart.DayOfWeek == IsoDayOfWeek.Monday)
+            foreach (var day in weekWithDays.DaysInWeek)
             {
-                // week starts on monday (normal week)
-                foreach (var day in weekWithDays.DaysInWeek)
+                if (relevantDaysOfWeek.Contains(day.DayOfWeek))
                 {
-                    if (relevantDaysOfWeek.Contains(day.DayOfWeek))
+                    if (allHolidays.Contains(day))
                     {
-                        if (allHolidays.Contains(day))
-                        {
-                            days.Add((day.DayOfWeek, true));
-                        }
-                        else
-                        {
-                            days.Add((day.DayOfWeek, false));
-                        }
+                        days.Add((day.DayOfWeek, true));
+                    }
+                    else if (day < startOfYear)
+                    {
+                        days.Add((day.DayOfWeek, true));
+                    }
+                    else
+                    {
+                        days.Add((day.DayOfWeek, false));
                     }
                 }
-                // if all days in week are holidays skip week and make new page
-            }
-            else
-            {
-                // week starts not on a monday i.e. first schoolweek
-                days.Add((IsoDayOfWeek.Monday, false));
-                days.Add((IsoDayOfWeek.Tuesday, false));
-                days.Add((IsoDayOfWeek.Wednesday, false));
             }
             return (weekWithDays.Week, days);
         }
@@ -169,26 +179,36 @@ namespace WeeklyCurriculum.Components
             var table = new Table(columns.ToArray());
             table.SetWidthPercent(100);
             table.SetHeightPercent(100);
-            table.AddHeaderCell("SW");
+            table.AddHeaderCell("");
             if (schoolClass.IsMonday)
             {
-                table.AddHeaderCell("Montag");
+                var par = new Paragraph("Montag");
+                par.SetTextAlignment(TextAlignment.CENTER);
+                table.AddHeaderCell(par);
             }
             if (schoolClass.IsTuesday)
             {
-                table.AddHeaderCell("Dienstag");
+                var par = new Paragraph("Dienstag");
+                par.SetTextAlignment(TextAlignment.CENTER);
+                table.AddHeaderCell(par);
             }
             if (schoolClass.IsWednesday)
             {
-                table.AddHeaderCell("Mittwoch");
+                var par = new Paragraph("Mittwoch");
+                par.SetTextAlignment(TextAlignment.CENTER);
+                table.AddHeaderCell(par);
             }
             if (schoolClass.IsThursday)
             {
-                table.AddHeaderCell("Donnerstag");
+                var par = new Paragraph("Donnerstag");
+                par.SetTextAlignment(TextAlignment.CENTER);
+                table.AddHeaderCell(par);
             }
             if (schoolClass.IsFriday)
             {
-                table.AddHeaderCell("Freitag");
+                var par = new Paragraph("Freitag");
+                par.SetTextAlignment(TextAlignment.CENTER);
+                table.AddHeaderCell(par);
             }
             return table;
         }
