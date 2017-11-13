@@ -21,7 +21,7 @@ namespace WeeklyCurriculum.Components
             var result = new List<HolidayData>();
             if (File.Exists(filename))
             {
-                var calCollection = Calendar.LoadFromFile(filename);
+                var calCollection = Calendar.Load(File.ReadAllText(filename));
                 var cal = calCollection.FirstOrDefault();
                 foreach (var item in cal.Events)
                 {

@@ -109,7 +109,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Ical.Net">
-      <Version>2.3.4</Version>
+      <Version>3.0.15</Version>
     </PackageReference>
     <PackageReference Include="itext7">
       <Version>7.0.5</Version>
@@ -148,6 +148,9 @@
       <Project>{cfe2cf22-6189-404d-ae1b-d1471da03cc5}</Project>
       <Name>WeeklyCurriculum.Contracts</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="calendar-text.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -29,7 +29,7 @@ namespace WeeklyCurriculum.Components
 
         public void Print(SchoolYear schoolYear, SchoolClass schoolClass)
         {
-            var dest = @"test.pdf";
+            var dest = $"{schoolYear.Year}_{schoolClass.Name}.pdf";
             using (var writer = new PdfWriter(dest))
             using (var pdf = new PdfDocument(writer))
             using (var document = new Document(pdf, PageSize.A4.Rotate()))
@@ -69,13 +69,16 @@ namespace WeeklyCurriculum.Components
                     }
                     list.Add(item);
                 }
-                schoolWeekSections.Add(list);
+                if (list.Count > 0)
+                {
+                    schoolWeekSections.Add(list);
+                }
 
                 var weekCount = 1;
                 for (var i = 0; i < schoolWeekSections.Count; i++)
                 {
                     var schoolWeekSection = schoolWeekSections[i];
-                    this.AddHeader(schoolClass.Name, document);
+                    this.AddHeader(schoolYear.Year.ToString(), schoolClass.Name, document);
                     var table = this.CreateBaseTable(columns, schoolClass);
                     foreach (var item in schoolWeekSection)
                     {
@@ -83,7 +86,7 @@ namespace WeeklyCurriculum.Components
                         foreach (var day in item.Days)
                         {
                             var cell = new Cell();
-                            cell.SetMinHeight(54);
+                            cell.SetMinHeight(50);
                             if (day.IsHoliday)
                             {
                                 cell.SetBackgroundColor(iText.Kernel.Colors.ColorConstants.LIGHT_GRAY);
@@ -168,9 +171,10 @@ namespace WeeklyCurriculum.Components
             }
         }
 
-        private void AddHeader(string name, Document document)
+        private void AddHeader(string year, string name, Document document)
         {
-            var header = new Paragraph($"Klasse: {name}");
+            var header = new Paragraph($"Schuljahr: {year}  Klasse: {name}");
+            header.SetFontSize(18);
             document.Add(header);
         }
 
