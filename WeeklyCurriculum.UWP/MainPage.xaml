@@ -13,9 +13,51 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <Border Grid.Row="0" Background="Red">
-            <TextBlock Text="Test" />
+        <Border
+            Grid.Row="0"
+            Height="50"
+            Padding="50,0"
+            Background="Red">
+            <TextBlock VerticalAlignment="Center" Text="Test" />
         </Border>
-        <community:MasterDetailsView />
+        <community:MasterDetailsView Grid.Row="1" ItemsSource="{Binding AvailableYears}">
+            <community:MasterDetailsView.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding}" />
+                </DataTemplate>
+            </community:MasterDetailsView.ItemTemplate>
+            <community:MasterDetailsView.MasterCommandBar>
+                <CommandBar>
+                    <AppBarButton
+                        FrameworkElement.AllowFocusOnInteraction="True"
+                        Icon="Add"
+                        Label="Add">
+                        <AppBarButton.Flyout>
+                            <Flyout>
+                                <StackPanel>
+                                    <TextBox
+                                        x:Name="YearInput"
+                                        Header="Enter name for new year"
+                                        PlaceholderText="Year" />
+                                    <Button
+                                        Command="{Binding AddYear}"
+                                        CommandParameter="{Binding ElementName=YearInput, Path=Text, Mode=OneWay}"
+                                        Content="OK" />
+                                </StackPanel>
+                            </Flyout>
+                        </AppBarButton.Flyout>
+                    </AppBarButton>
+                </CommandBar>
+            </community:MasterDetailsView.MasterCommandBar>
+            <community:MasterDetailsView.DetailsTemplate>
+                <DataTemplate>
+                    <community:MasterDetailsView>
+                        <community:MasterDetailsView.DetailsTemplate>
+                            <DataTemplate />
+                        </community:MasterDetailsView.DetailsTemplate>
+                    </community:MasterDetailsView>
+                </DataTemplate>
+            </community:MasterDetailsView.DetailsTemplate>
+        </community:MasterDetailsView>
     </Grid>
 </Page>

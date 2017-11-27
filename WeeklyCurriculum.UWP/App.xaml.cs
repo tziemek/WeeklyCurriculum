@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using WeeklyCurriculum.Components;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
@@ -67,6 +68,7 @@ namespace WeeklyCurriculum.UWP
                     // configuring the new page by passing required information as a navigation
                     // parameter
                     rootFrame.Navigate(typeof(MainPage), e.Arguments);
+                    rootFrame.DataContext = new MainViewModel(new FileSchoolClassProvider());
                 }
                 // Ensure the current window is active
                 Window.Current.Activate();

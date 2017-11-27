@@ -98,6 +98,7 @@
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="MainViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -143,8 +144,15 @@
     <PackageReference Include="Microsoft.Toolkit.Uwp.UI.Controls">
       <Version>2.1.0</Version>
     </PackageReference>
+    <PackageReference Include="NodaTime">
+      <Version>2.2.2</Version>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\WeeklyCurriculum.Components\WeeklyCurriculum.Components.csproj">
+      <Project>{58253293-9476-4d90-8a7c-ccf0b4a39fad}</Project>
+      <Name>WeeklyCurriculum.Components</Name>
+    </ProjectReference>
     <ProjectReference Include="..\WeeklyCurriculum.Contracts\WeeklyCurriculum.Contracts.csproj">
       <Project>{cfe2cf22-6189-404d-ae1b-d1471da03cc5}</Project>
       <Name>WeeklyCurriculum.Contracts</Name>
