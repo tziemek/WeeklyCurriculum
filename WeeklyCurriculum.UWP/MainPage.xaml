@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:community="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="using:Microsoft.Xaml.Interactivity"
     xmlns:local="using:WeeklyCurriculum.UWP"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
@@ -23,26 +24,30 @@
         <community:MasterDetailsView Grid.Row="1" ItemsSource="{Binding AvailableYears}">
             <community:MasterDetailsView.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding}" />
+                    <TextBlock Text="{Binding Year}" />
                 </DataTemplate>
             </community:MasterDetailsView.ItemTemplate>
             <community:MasterDetailsView.MasterCommandBar>
                 <CommandBar>
                     <AppBarButton
+                        x:Name="AddButton"
                         FrameworkElement.AllowFocusOnInteraction="True"
                         Icon="Add"
                         Label="Add">
                         <AppBarButton.Flyout>
                             <Flyout>
+                                <i:Interaction.Behaviors>
+                                    <local:FlyoutBehaviors IsFlyoutOpen="{Binding IsFlyoutOpen, Mode=TwoWay}" />
+                                </i:Interaction.Behaviors>
                                 <StackPanel>
                                     <TextBox
                                         x:Name="YearInput"
                                         Header="Enter name for new year"
-                                        PlaceholderText="Year" />
-                                    <Button
-                                        Command="{Binding AddYear}"
-                                        CommandParameter="{Binding ElementName=YearInput, Path=Text, Mode=OneWay}"
-                                        Content="OK" />
+                                        PlaceholderText="Year"
+                                        Text="{Binding AddYearViewModel.Year, Mode=TwoWay}" />
+                                    <DatePicker x:Name="YearStartInput" Header="Start" />
+                                    <CalendarDatePicker x:Name="YearEndInput" Header="End" />
+                                    <Button Command="{Binding AddYear}" Content="OK" />
                                 </StackPanel>
                             </Flyout>
                         </AppBarButton.Flyout>

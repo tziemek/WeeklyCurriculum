@@ -14,6 +14,8 @@ namespace WeeklyCurriculum.UWP
         private readonly ISchoolClassProvider schoolClassProvider;
         private SchoolYear selectedYear;
         private SchoolClass selectedClass;
+        private bool isFlyoutOpen;
+        private NewYearInputDialogViewModel addYearViewModel;
 
         public MainViewModel(ISchoolClassProvider schoolClassProvider)
         {
@@ -35,10 +37,25 @@ namespace WeeklyCurriculum.UWP
             }
 
             this.AddYear = new RelayCommand(this.OnAddYear);
+            this.AddYearViewModel = new NewYearInputDialogViewModel();
         }
 
-        private void OnAddYear(object obj)
+        private void OnAddYear(object _)
         {
+            if (int.TryParse(this.AddYearViewModel.Year, out var year))
+            {
+                if (!this.AvailableYears.Any(y => y.Year == year))
+                {
+                    var schoolYear = new SchoolYear();
+                    schoolYear.Year = year;
+                    schoolYear.Classes = new ObservableCollection<SchoolClass>();
+                    schoolYear.Holidays = new ObservableCollection<Holiday>();
+                    this.AvailableYears.Add(schoolYear);
+                    this.SelectedYear = schoolYear;
+                    this.IsFlyoutOpen = false;
+                    this.AddYearViewModel.Year = string.Empty;
+                }
+            }
         }
 
         public ObservableCollection<SchoolYear> AvailableYears { get; private set; }
@@ -72,6 +89,25 @@ namespace WeeklyCurriculum.UWP
         }
 
         public RelayCommand AddYear { get; }
+
+        public bool IsFlyoutOpen
+        {
+            get => this.isFlyoutOpen; set
+            {
+                this.isFlyoutOpen = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public NewYearInputDialogViewModel AddYearViewModel
+        {
+            get => this.addYearViewModel;
+            set
+            {
+                this.addYearViewModel = value;
+                this.RaisePropertyChanged();
+            }
+        }
 
         private SchoolYear CreateSchoolYearFromData(SchoolYearData schoolYearData)
         {

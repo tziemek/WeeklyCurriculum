@@ -2,6 +2,7 @@
     x:Class="WeeklyCurriculum.Wpf.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:contracts="clr-namespace:WeeklyCurriculum.Contracts;assembly=WeeklyCurriculum.Contracts"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:local="clr-namespace:WeeklyCurriculum.Wpf"
@@ -23,7 +24,7 @@
                 <TextBlock Foreground="Red" Text="{Binding ErrorMessage}" />
             </StackPanel>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type local:NewYearInputDialogViewModel}">
+        <DataTemplate DataType="{x:Type contracts:NewYearInputDialogViewModel}">
             <StackPanel>
                 <TextBox
                     md:HintAssist.Hint="Jahr"

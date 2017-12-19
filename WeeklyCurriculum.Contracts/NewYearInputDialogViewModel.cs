@@ -1,7 +1,7 @@
 ﻿using System;
 using WeeklyCurriculum.Contracts;
 
-namespace WeeklyCurriculum.Wpf
+namespace WeeklyCurriculum.Contracts
 {
     public class NewYearInputDialogViewModel : ViewModelBase
     {
